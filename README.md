@@ -58,13 +58,38 @@ The script will update the system packages, install the required tools and appli
 
 X is an opinionated take on what Linux can be at its best for web development. However, you can easily customize the script to suit your preferences and requirements. Each application has its own installation script in the `apps` directory, so you can add, remove, or modify the scripts as needed.
 
+## Development Stacks
+
+X provides specialized installation stacks for different types of developers. You can install one or multiple stacks based on your needs:
+
+- PHP Stack (PHP 8.2, MariaDB, Composer)
+- Node.js Stack (Node.js LTS, MongoDB, TypeScript)
+- Python Stack (Python 3, PostgreSQL, Development Tools)
+- Java Stack (OpenJDK 17, Maven, Gradle)
+
+To install stacks, use:
+
+```bash
+./setup_stack.sh [stack1] [stack2] ...
+```
+
 ## Disclaimer
 
 X is provided as-is without any warranty. Use it at your own risk. Always review the scripts before running them to ensure they meet your security and privacy requirements.
 
+## Acknowledgments
+
+X draws inspiration from several excellent projects in the development environment automation space:
+
+- [Omakub](https://github.com/basecamp/omakub) - Basecamp's approach to development environment setup
+- [Tuffix](https://github.com/kevinwortman/tuffix) - California State University Fullerton's Linux development environment
+- And many other open-source projects that have paved the way for automated development environment setup
+
+We're grateful to these projects and their maintainers for sharing their work with the community and inspiring better development workflows.
+
 ## License
 
-X is open-source software licensed under the [ License](LICENSE).
+X is open-source software licensed under the [License](LICENSE).
 
 ---
 
