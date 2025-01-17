@@ -19,27 +19,36 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
-        
-      - name: Create output directory
-        run: mkdir -p .github/badges reports
-        
+      
+      - name: Debug Directory Structure
+        run: |
+          pwd
+          ls -la
+          
       - name: Scan Installation Scripts
         id: scan-scripts
+        shell: bash
         run: |
-          # Create output directory for reports and badges
-          REPORT_DIR="reports"
-          BADGE_DIR=".github/badges"
+          set -x  # Enable debugging
+          
+          # Create directories
+          echo "Creating directories..."
+          mkdir -p reports
+          mkdir -p .github/badges
           
           # Initialize report file
-          echo "# Available Installation Scripts" > "$REPORT_DIR/scripts_report.md"
-          echo "" >> "$REPORT_DIR/scripts_report.md"
-          echo "Last updated: $(date '+%Y-%m-%d %H:%M:%S UTC')" >> "$REPORT_DIR/scripts_report.md"
-          echo "" >> "$REPORT_DIR/scripts_report.md"
+          echo "Initializing report file..."
+          {
+            echo "# Available Installation Scripts"
+            echo ""
+            echo "Last updated: $(date '+%Y-%m-%d %H:%M:%S UTC')"
+            echo ""
+          } > reports/scripts_report.md || { echo "Failed to create report file"; exit 1; }
           
-          # Initialize category arrays
-          declare -A categories=()
+          # Initialize arrays
+          declare -A categories
           
-          # Function to detect script type and category
+          # Function to detect script type
           detect_script_type() {
             local file="$1"
             if [ ! -f "$file" ]; then
@@ -56,130 +65,115 @@ jobs:
             fi
           }
           
-          # Function to scan directory recursively
-          scan_directory() {
-            local dir="$1"
-            if [ ! -d "$dir" ]; then
-              return
-            fi
-            
-            local base_category="$(basename "$dir")"
-            
-            # Skip .git and node_modules directories
-            if [[ "$dir" == *".git"* ]] || [[ "$dir" == *"node_modules"* ]]; then
-              return
-            fi
-            
-            # Process all shell scripts in current directory
-            for file in "$dir"/*.sh; do
-              if [ -f "$file" ]; then
-                local filename=$(basename "$file" .sh)
-                local category="$base_category"
-                local type=$(detect_script_type "$file")
-                
-                # Create category key if it doesn't exist
-                if [ -z "${categories[$category]}" ]; then
-                  categories[$category]=""
-                fi
-                
-                # Add script info to category
-                categories[$category]+="$filename:$type "
-              fi
-            done
-            
-            # Recursively process subdirectories
-            for subdir in "$dir"/*/; do
-              if [ -d "$subdir" ]; then
-                scan_directory "$subdir"
-              fi
-            done
-          }
-          
           # Initialize counters
           total_install=0
           total_uninstall=0
           total_utility=0
           
-          # Scan main directories
+          # Scan directories
+          echo "Scanning directories..."
           for dir in install apps; do
             if [ -d "$dir" ]; then
-              scan_directory "$dir"
+              echo "Processing directory: $dir"
+              for script in $(find "$dir" -type f -name "*.sh"); do
+                echo "Found script: $script"
+                filename=$(basename "$script" .sh)
+                category=$(dirname "$script" | sed 's/\.\///')
+                type=$(detect_script_type "$script")
+                
+                echo "Processing $filename ($type) in $category"
+                
+                case "$type" in
+                  "install")
+                    ((total_install++))
+                    ;;
+                  "uninstall")
+                    ((total_uninstall++))
+                    ;;
+                  "utility")
+                    ((total_utility++))
+                    ;;
+                esac
+                
+                # Add to category
+                if [ -z "${categories[$category]}" ]; then
+                  categories[$category]=""
+                fi
+                categories[$category]+="$filename:$type "
+              done
+            else
+              echo "Directory $dir not found"
             fi
           done
           
-          # Generate report sections
-          for category in "${!categories[@]}"; do
-            if [ -n "${categories[$category]}" ]; then
-              echo "## Category: $category" >> "$REPORT_DIR/scripts_report.md"
-              echo "" >> "$REPORT_DIR/scripts_report.md"
+          # Generate report
+          echo "Generating report..."
+          {
+            echo "## Summary"
+            echo ""
+            echo "- Total Installation Scripts: $total_install"
+            echo "- Total Uninstallation Scripts: $total_uninstall"
+            echo "- Total Utility Scripts: $total_utility"
+            echo ""
+            
+            for category in "${!categories[@]}"; do
+              echo "## Category: $category"
+              echo ""
               
-              # Arrays for sorting scripts by type
               declare -a install_scripts=()
               declare -a uninstall_scripts=()
               declare -a utility_scripts=()
               
-              # Sort scripts by type
               for script_info in ${categories[$category]}; do
                 IFS=':' read -r script type <<< "$script_info"
                 case "$type" in
-                  "install")
-                    install_scripts+=("$script")
-                    ((total_install++))
-                    ;;
-                  "uninstall")
-                    uninstall_scripts+=("$script")
-                    ((total_uninstall++))
-                    ;;
-                  "utility")
-                    utility_scripts+=("$script")
-                    ((total_utility++))
-                    ;;
+                  "install") install_scripts+=("$script") ;;
+                  "uninstall") uninstall_scripts+=("$script") ;;
+                  "utility") utility_scripts+=("$script") ;;
                 esac
               done
               
-              # Print sorted scripts
               if [ ${#install_scripts[@]} -gt 0 ]; then
-                echo "### Installation Scripts:" >> "$REPORT_DIR/scripts_report.md"
+                echo "### Installation Scripts:"
                 for script in "${install_scripts[@]}"; do
-                  echo "- $script" >> "$REPORT_DIR/scripts_report.md"
+                  echo "- $script"
                 done
-                echo "" >> "$REPORT_DIR/scripts_report.md"
+                echo ""
               fi
               
               if [ ${#uninstall_scripts[@]} -gt 0 ]; then
-                echo "### Uninstallation Scripts:" >> "$REPORT_DIR/scripts_report.md"
+                echo "### Uninstallation Scripts:"
                 for script in "${uninstall_scripts[@]}"; do
-                  echo "- $script" >> "$REPORT_DIR/scripts_report.md"
+                  echo "- $script"
                 done
-                echo "" >> "$REPORT_DIR/scripts_report.md"
+                echo ""
               fi
               
               if [ ${#utility_scripts[@]} -gt 0 ]; then
-                echo "### Utility Scripts:" >> "$REPORT_DIR/scripts_report.md"
+                echo "### Utility Scripts:"
                 for script in "${utility_scripts[@]}"; do
-                  echo "- $script" >> "$REPORT_DIR/scripts_report.md"
+                  echo "- $script"
                 done
-                echo "" >> "$REPORT_DIR/scripts_report.md"
+                echo ""
               fi
-            fi
-          done
+            done
+          } >> reports/scripts_report.md || { echo "Failed to update report file"; exit 1; }
           
-          # Add summary
-          echo "## Summary" >> "$REPORT_DIR/scripts_report.md"
-          echo "" >> "$REPORT_DIR/scripts_report.md"
-          echo "- Total Installation Scripts: $total_install" >> "$REPORT_DIR/scripts_report.md"
-          echo "- Total Uninstallation Scripts: $total_uninstall" >> "$REPORT_DIR/scripts_report.md"
-          echo "- Total Utility Scripts: $total_utility" >> "$REPORT_DIR/scripts_report.md"
+          # Create badge files
+          echo "Creating badge files..."
+          echo "{\"schemaVersion\": 1, \"label\": \"install scripts\", \"message\": \"$total_install available\", \"color\": \"blue\"}" > .github/badges/install_badge.json || { echo "Failed to create install badge"; exit 1; }
+          echo "{\"schemaVersion\": 1, \"label\": \"uninstall scripts\", \"message\": \"$total_uninstall available\", \"color\": \"red\"}" > .github/badges/uninstall_badge.json || { echo "Failed to create uninstall badge"; exit 1; }
+          echo "{\"schemaVersion\": 1, \"label\": \"utility scripts\", \"message\": \"$total_utility available\", \"color\": \"green\"}" > .github/badges/utility_badge.json || { echo "Failed to create utility badge"; exit 1; }
           
-          # Set outputs for badge creation
-          echo "install_total=$total_install" >> $GITHUB_OUTPUT
-          echo "uninstall_total=$total_uninstall" >> $GITHUB_OUTPUT
-          echo "utility_total=$total_utility" >> $GITHUB_OUTPUT
+          # Set outputs
+          echo "Setting outputs..."
+          {
+            echo "install_total=$total_install"
+            echo "uninstall_total=$total_uninstall"
+            echo "utility_total=$total_utility"
+          } >> $GITHUB_OUTPUT
           
-          # Create badge JSON files
-          echo "{\"schemaVersion\": 1, \"label\": \"install scripts\", \"message\": \"$total_install available\", \"color\": \"blue\"}" > "$BADGE_DIR/install_badge.json"
-          echo "{\"schemaVersion\": 1, \"label\": \"uninstall scripts\", \"message\": \"$total_uninstall available\", \"color\": \"red\"}" > "$BADGE_DIR/uninstall_badge.json"
-          echo "{\"schemaVersion\": 1, \"label\": \"utility scripts\", \"message\": \"$total_utility available\", \"color\": \"green\"}" > "$BADGE_DIR/utility_badge.json"
+          echo "Script completed successfully"
           
       - name: Upload Report
         uses: actions/upload-artifact@v3
