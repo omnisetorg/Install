@@ -66,7 +66,7 @@ X is an opinionated take on what Linux can be at its best for web development. H
 
 X provides specialized installation stacks for different types of developers. You can install one or multiple stacks based on your needs:
 
-- PHP Stack (PHP 8.2, MariaDB, Composer)
+- PHP Stack (PHP 8.4, MariaDB, Composer)
 - Node.js Stack (Node.js LTS, MongoDB, TypeScript)
 - Python Stack (Python 3, PostgreSQL, Development Tools)
 - Java Stack (OpenJDK 17, Maven, Gradle)
