@@ -1,5 +1,9 @@
 # X
 
+![Installation Scripts](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/{username}/{repo}/main/install_badge.json)
+![Uninstallation Scripts](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/{username}/{repo}/main/uninstall_badge.json)
+![Utility Scripts](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/{username}/{repo}/main/utility_badge.json)
+
 X is a script that turns a fresh installation of a Debian-based Linux distribution), including Raspberry Pi OS, into a fully-configured, beautiful, and modern web development system with a single command. It eliminates the need to write bespoke configs for every essential tool just to get started or to be up on all the latest command-line tools.
 
 ## "Supported" Platforms
@@ -72,6 +76,10 @@ To install stacks, use:
 ```bash
 ./setup_stack.sh [stack1] [stack2] ...
 ```
+
+## Application compatibility
+
+Latest script scan results can be found in the [Actions tab](../../actions/workflows/check-scripts.yml).
 
 ## Disclaimer
 
