@@ -53,7 +53,7 @@ jobs:
             # Skip .git and node_modules directories
             if [[ "$dir" == *".git"* ]] || [[ "$dir" == *"node_modules"* ]]; then
               return
-            }
+            fi
             
             # Process all shell scripts in current directory
             for file in "$dir"/*.sh; do
@@ -87,11 +87,12 @@ jobs:
             fi
           done
           
-          # Generate report sections
+          # Initialize counters
           total_install=0
           total_uninstall=0
           total_utility=0
           
+          # Generate report sections
           for category in "${!categories[@]}"; do
             if [ -n "${categories[$category]}" ]; then
               echo "## Category: $category" >> scripts_report.md
