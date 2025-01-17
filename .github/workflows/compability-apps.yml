@@ -20,13 +20,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         
+      - name: Create output directory
+        run: mkdir -p .github/badges reports
+        
       - name: Scan Installation Scripts
         id: scan-scripts
         run: |
-          echo "# Available Installation Scripts" > scripts_report.md
-          echo "" >> scripts_report.md
-          echo "Last updated: $(date '+%Y-%m-%d %H:%M:%S UTC')" >> scripts_report.md
-          echo "" >> scripts_report.md
+          # Create output directory for reports and badges
+          REPORT_DIR="reports"
+          BADGE_DIR=".github/badges"
+          
+          # Initialize report file
+          echo "# Available Installation Scripts" > "$REPORT_DIR/scripts_report.md"
+          echo "" >> "$REPORT_DIR/scripts_report.md"
+          echo "Last updated: $(date '+%Y-%m-%d %H:%M:%S UTC')" >> "$REPORT_DIR/scripts_report.md"
+          echo "" >> "$REPORT_DIR/scripts_report.md"
           
           # Initialize category arrays
           declare -A categories=()
@@ -34,11 +42,14 @@ jobs:
           # Function to detect script type and category
           detect_script_type() {
             local file="$1"
-            local base_category="$2"
+            if [ ! -f "$file" ]; then
+              echo "utility"
+              return
+            fi
             
-            if grep -q "apt install\|wget\|curl\|docker run\|pip install\|npm install" "$file"; then
+            if grep -q "apt install\|wget\|curl\|docker run\|pip install\|npm install" "$file" 2>/dev/null; then
               echo "install"
-            elif grep -q "apt remove\|apt purge\|apt autoremove\|uninstall\|docker rm" "$file"; then
+            elif grep -q "apt remove\|apt purge\|apt autoremove\|uninstall\|docker rm" "$file" 2>/dev/null; then
               echo "uninstall"
             else
               echo "utility"
@@ -48,6 +59,10 @@ jobs:
           # Function to scan directory recursively
           scan_directory() {
             local dir="$1"
+            if [ ! -d "$dir" ]; then
+              return
+            fi
+            
             local base_category="$(basename "$dir")"
             
             # Skip .git and node_modules directories
@@ -60,7 +75,7 @@ jobs:
               if [ -f "$file" ]; then
                 local filename=$(basename "$file" .sh)
                 local category="$base_category"
-                local type=$(detect_script_type "$file" "$category")
+                local type=$(detect_script_type "$file")
                 
                 # Create category key if it doesn't exist
                 if [ -z "${categories[$category]}" ]; then
@@ -80,6 +95,11 @@ jobs:
             done
           }
           
+          # Initialize counters
+          total_install=0
+          total_uninstall=0
+          total_utility=0
+          
           # Scan main directories
           for dir in install apps; do
             if [ -d "$dir" ]; then
@@ -87,16 +107,11 @@ jobs:
             fi
           done
           
-          # Initialize counters
-          total_install=0
-          total_uninstall=0
-          total_utility=0
-          
           # Generate report sections
           for category in "${!categories[@]}"; do
             if [ -n "${categories[$category]}" ]; then
-              echo "## Category: $category" >> scripts_report.md
-              echo "" >> scripts_report.md
+              echo "## Category: $category" >> "$REPORT_DIR/scripts_report.md"
+              echo "" >> "$REPORT_DIR/scripts_report.md"
               
               # Arrays for sorting scripts by type
               declare -a install_scripts=()
@@ -124,37 +139,37 @@ jobs:
               
               # Print sorted scripts
               if [ ${#install_scripts[@]} -gt 0 ]; then
-                echo "### Installation Scripts:" >> scripts_report.md
+                echo "### Installation Scripts:" >> "$REPORT_DIR/scripts_report.md"
                 for script in "${install_scripts[@]}"; do
-                  echo "- $script" >> scripts_report.md
+                  echo "- $script" >> "$REPORT_DIR/scripts_report.md"
                 done
-                echo "" >> scripts_report.md
+                echo "" >> "$REPORT_DIR/scripts_report.md"
               fi
               
               if [ ${#uninstall_scripts[@]} -gt 0 ]; then
-                echo "### Uninstallation Scripts:" >> scripts_report.md
+                echo "### Uninstallation Scripts:" >> "$REPORT_DIR/scripts_report.md"
                 for script in "${uninstall_scripts[@]}"; do
-                  echo "- $script" >> scripts_report.md
+                  echo "- $script" >> "$REPORT_DIR/scripts_report.md"
                 done
-                echo "" >> scripts_report.md
+                echo "" >> "$REPORT_DIR/scripts_report.md"
               fi
               
               if [ ${#utility_scripts[@]} -gt 0 ]; then
-                echo "### Utility Scripts:" >> scripts_report.md
+                echo "### Utility Scripts:" >> "$REPORT_DIR/scripts_report.md"
                 for script in "${utility_scripts[@]}"; do
-                  echo "- $script" >> scripts_report.md
+                  echo "- $script" >> "$REPORT_DIR/scripts_report.md"
                 done
-                echo "" >> scripts_report.md
+                echo "" >> "$REPORT_DIR/scripts_report.md"
               fi
             fi
           done
           
           # Add summary
-          echo "## Summary" >> scripts_report.md
-          echo "" >> scripts_report.md
-          echo "- Total Installation Scripts: $total_install" >> scripts_report.md
-          echo "- Total Uninstallation Scripts: $total_uninstall" >> scripts_report.md
-          echo "- Total Utility Scripts: $total_utility" >> scripts_report.md
+          echo "## Summary" >> "$REPORT_DIR/scripts_report.md"
+          echo "" >> "$REPORT_DIR/scripts_report.md"
+          echo "- Total Installation Scripts: $total_install" >> "$REPORT_DIR/scripts_report.md"
+          echo "- Total Uninstallation Scripts: $total_uninstall" >> "$REPORT_DIR/scripts_report.md"
+          echo "- Total Utility Scripts: $total_utility" >> "$REPORT_DIR/scripts_report.md"
           
           # Set outputs for badge creation
           echo "install_total=$total_install" >> $GITHUB_OUTPUT
@@ -162,24 +177,21 @@ jobs:
           echo "utility_total=$total_utility" >> $GITHUB_OUTPUT
           
           # Create badge JSON files
-          echo "{\"schemaVersion\": 1, \"label\": \"install scripts\", \"message\": \"$total_install available\", \"color\": \"blue\"}" > install_badge.json
-          echo "{\"schemaVersion\": 1, \"label\": \"uninstall scripts\", \"message\": \"$total_uninstall available\", \"color\": \"red\"}" > uninstall_badge.json
-          echo "{\"schemaVersion\": 1, \"label\": \"utility scripts\", \"message\": \"$total_utility available\", \"color\": \"green\"}" > utility_badge.json
+          echo "{\"schemaVersion\": 1, \"label\": \"install scripts\", \"message\": \"$total_install available\", \"color\": \"blue\"}" > "$BADGE_DIR/install_badge.json"
+          echo "{\"schemaVersion\": 1, \"label\": \"uninstall scripts\", \"message\": \"$total_uninstall available\", \"color\": \"red\"}" > "$BADGE_DIR/uninstall_badge.json"
+          echo "{\"schemaVersion\": 1, \"label\": \"utility scripts\", \"message\": \"$total_utility available\", \"color\": \"green\"}" > "$BADGE_DIR/utility_badge.json"
           
       - name: Upload Report
         uses: actions/upload-artifact@v3
         with:
           name: scripts-report
-          path: scripts_report.md
+          path: reports/scripts_report.md
           
       - name: Upload Badge Data
         uses: actions/upload-artifact@v3
         with:
           name: status-badges
-          path: |
-            install_badge.json
-            uninstall_badge.json
-            utility_badge.json
+          path: .github/badges/*.json
             
       - name: Comment PR
         if: github.event_name == 'pull_request'
@@ -187,7 +199,7 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            const report = fs.readFileSync('scripts_report.md', 'utf8');
+            const report = fs.readFileSync('reports/scripts_report.md', 'utf8');
             const install_total = Number('${{ steps.scan-scripts.outputs.install_total }}');
             const uninstall_total = Number('${{ steps.scan-scripts.outputs.uninstall_total }}');
             const utility_total = Number('${{ steps.scan-scripts.outputs.utility_total }}');
