@@ -8,74 +8,72 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 BOLD='\033[1m'
 
-# Developer personalities and their default tools
+# Personalities and their default tools
 declare -A PERSONALITIES=(
-    ["minimalist"]="essentials,vscode,dev-language"
+    ["minimalist"]="essentials,vlc,thunderbird"
     ["fullstack"]="essentials,vscode,chrome,docker,dev-language,dev-storage"
     ["content_creator"]="essentials,vscode,chrome,davinci-resolve,discord,vlc"
     ["cloud_native"]="essentials,docker,vscode,dev-language,dev-storage"
+    ["gamer"]="essentials,steam,discord,chrome,vlc"
+    ["student"]="essentials,chrome,vscode,thunderbird,vlc"
+    ["designer"]="essentials,chrome,vscode,davinci-resolve,discord"
+    ["data_scientist"]="essentials,vscode,chrome,docker,dev-language,dev-storage,virtualbox"
 )
 
-# Function to print banner
 print_banner() {
     echo -e "${GREEN}"
-    echo "██████╗ ███████╗██╗   ██╗███████╗███╗   ██╗██╗   ██╗"
-    echo "██╔══██╗██╔════╝██║   ██║██╔════╝████╗  ██║██║   ██║"
-    echo "██║  ██║█████╗  ██║   ██║█████╗  ██╔██╗ ██║██║   ██║"
-    echo "██║  ██║██╔══╝  ╚██╗ ██╔╝██╔══╝  ██║╚██╗██║╚██╗ ██╔╝"
-    echo "██████╔╝███████╗ ╚████╔╝ ███████╗██║ ╚████║ ╚████╔╝ "
-    echo "╚═════╝ ╚══════╝  ╚═══╝  ╚══════╝╚═╝  ╚═══╝  ╚═══╝  "
+    echo "██╗  ██╗"
+    echo "╚██╗██╔╝"
+    echo " ╚███╔╝ "
+    echo " ██╔██╗ "
+    echo "██╔╝ ██╗"
+    echo "╚═╝  ╚═╝"
     echo -e "${NC}"
-    echo -e "${BOLD}Modern Development Environment Setup${NC}"
+    echo -e "${BOLD}System Environment Setup${NC}"
     echo ""
 }
 
-# Function to print step
 print_step() {
     echo -e "${BLUE}==> ${NC}${BOLD}$1${NC}"
 }
 
-# Function to print success
 print_success() {
     echo -e "${GREEN}==> Success:${NC} $1"
 }
 
-# Function to print error
 print_error() {
     echo -e "${RED}==> Error:${NC} $1"
 }
 
-# Function to print warning
 print_warning() {
     echo -e "${YELLOW}==> Warning:${NC} $1"
 }
 
-# Function to display available personalities
 show_personalities() {
-    echo -e "\nAvailable developer personalities:"
-    echo -e "${BOLD}minimalist${NC} - Lightweight setup with essential tools only"
+    echo -e "\nAvailable personalities:"
+    echo -e "${BOLD}minimalist${NC} - Essential development tools only"
     echo -e "${BOLD}fullstack${NC} - Complete web development environment"
-    echo -e "${BOLD}content_creator${NC} - Development + content creation tools"
-    echo -e "${BOLD}cloud_native${NC} - Cloud development and containerization focus"
+    echo -e "${BOLD}content_creator${NC} - Media creation and development tools"
+    echo -e "${BOLD}cloud_native${NC} - Cloud and container focused"
+    echo -e "${BOLD}gamer${NC} - Gaming and communication tools"
+    echo -e "${BOLD}student${NC} - Academic and productivity tools"
+    echo -e "${BOLD}designer${NC} - Design and creative tools"
+    echo -e "${BOLD}data_scientist${NC} - Data analysis and machine learning tools"
     echo ""
 }
 
-# Function to determine CPU architecture
 get_arch() {
-    local arch
     case $(uname -m) in
-        x86_64) arch="amd64" ;;
-        armv7l) arch="armhf" ;;
-        aarch64) arch="arm64" ;;
+        x86_64) echo "amd64" ;;
+        armv7l) echo "armhf" ;;
+        aarch64) echo "arm64" ;;
         *) print_error "Unknown architecture"; exit 1 ;;
     esac
-    echo "$arch"
 }
 
-# Function to check system compatibility
 check_system() {
     if ! command -v apt-get >/dev/null; then
         print_error "This script requires a Debian-based Linux distribution"
@@ -83,11 +81,9 @@ check_system() {
     fi
 }
 
-# Function to get selected personality
 get_selected_personality() {
-    local personality="fullstack"  # Default personality
+    local personality="fullstack"
     
-    # Check if personality is provided as argument
     if [ $# -gt 0 ]; then
         if [[ -n "${PERSONALITIES[$1]}" ]]; then
             personality="$1"
@@ -97,9 +93,8 @@ get_selected_personality() {
             exit 1
         fi
     else
-        # Interactive personality selection
         show_personalities
-        echo "Select a developer personality (default: fullstack):"
+        echo "Select a personality (default: fullstack):"
         read -r selected_personality
         
         if [ -n "$selected_personality" ]; then
@@ -114,7 +109,6 @@ get_selected_personality() {
     echo "$personality"
 }
 
-# Function to validate and prepare app script
 prepare_app_script() {
     local app=$1
     local script_path="apps/${app}.sh"
@@ -127,7 +121,6 @@ prepare_app_script() {
     chmod +x "$script_path"
 }
 
-# Function to install selected apps
 install_apps() {
     local arch
     arch=$(get_arch)
@@ -141,7 +134,6 @@ install_apps() {
     
     print_step "Installing selected applications..."
     
-    # Convert comma-separated string to array
     IFS=',' read -ra APP_ARRAY <<< "$apps"
     
     for app in "${APP_ARRAY[@]}"; do
@@ -156,36 +148,34 @@ install_apps() {
     done
 }
 
-# Function to configure development environment
 configure_environment() {
     local personality="$1"
     
-    print_step "Configuring development environment..."
+    print_step "Configuring environment..."
     
-    # Additional configuration based on personality
     case "$personality" in
-        "minimalist")
-            # Minimal configuration
-            ;;
-        "fullstack")
-            # Configure additional dev tools
+        "minimalist"|"fullstack"|"cloud_native")
             if command -v docker >/dev/null; then
-                print_step "Setting up default Docker containers..."
+                print_step "Setting up development containers..."
             fi
             ;;
-        "content_creator")
-            # Configure media tools
+        "content_creator"|"designer")
+            print_step "Configuring media tools..."
             ;;
-        "cloud_native")
-            # Configure cloud tools
+        "gamer")
+            print_step "Optimizing system for gaming..."
+            ;;
+        "student")
+            print_step "Setting up academic tools..."
+            ;;
+        "data_scientist")
             if command -v docker >/dev/null; then
-                print_step "Setting up cloud-native tools..."
+                print_step "Setting up data science containers..."
             fi
             ;;
     esac
 }
 
-# Main installation function
 main() {
     print_banner
     check_system
@@ -196,14 +186,12 @@ main() {
     install_apps "$personality"
     configure_environment "$personality"
     
-    # Clean up
     print_step "Cleaning up..."
     sudo apt autoremove -y
     sudo apt autoclean -y
     
-    print_success "Installation complete! Your ${personality} development environment is ready."
+    print_success "Installation complete! Your ${personality} environment is ready."
     echo "Please log out and log back in to complete the setup."
 }
 
-# Execute main function with all arguments
 main "$@"
