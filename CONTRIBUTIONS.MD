@@ -1,4 +1,4 @@
-# Contributing to X
+# Contributing to OmniSet
 
 ## Getting Started
 
@@ -11,8 +11,8 @@
 ## Development Environment
 
 ```bash
-git clone https://github.com/yourusername/X.git
-cd X
+git clone https://github.com/omnisetorg/install.git
+cd install
 ./setup.sh # Use minimalist personality for development
 ```
 
