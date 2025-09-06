@@ -33,6 +33,7 @@ get_software_name() {
         "vlc") echo "VLC Media Player";;
         "steam") echo "Steam";;
         "thunderbird") echo "Thunderbird";;
+        "cli-tools") echo "CLI Tools (fzf, zoxide, ripgrep, eza, fd, fastfetch, btop)";;
         *) echo "$(tr '[:lower:]' '[:upper:]' <<< ${filename:0:1})${filename:1}";;
     esac
 }
@@ -88,7 +89,7 @@ for idx in "${selected_indices[@]}"; do
     software_name="${software_names[$((idx-1))]}"
     
     print_message "Uninstalling $software_name..."
-    if bash "$script_path" "$(dpkg --print-architecture)"; then
+    if bash "$script_path" "$(dpkg --print-architecture)" 2>&1; then
         print_success "$software_name uninstalled successfully"
     else
         print_error "Failed to uninstall $software_name"
@@ -96,3 +97,18 @@ for idx in "${selected_indices[@]}"; do
 done
 
 print_success "Uninstallation process completed"
+
+echo
+print_message "Cleaning up system..."
+echo "Run system cleanup? (y/N)"
+read -r cleanup
+
+if [[ "$cleanup" =~ ^[Yy]$ ]]; then
+    print_message "Running apt autoremove..."
+    sudo apt autoremove -y
+    
+    print_message "Running apt autoclean..."
+    sudo apt autoclean
+    
+    print_success "System cleanup completed"
+fi

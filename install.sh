@@ -86,19 +86,20 @@ EOF
 
 # Personalities and their default tools
 declare -A PERSONALITIES=(
-    ["minimalist"]="essentials,vlc,thunderbird"
-    ["fullstack"]="essentials,vscode,chrome,docker,dev-language,dev-storage"
-    ["content_creator"]="essentials,vscode,chrome,davinci-resolve,discord,vlc"
-    ["cloud_native"]="essentials,docker,vscode,dev-language,dev-storage"
-    ["gamer"]="essentials,steam,discord,chrome,vlc"
-    ["student"]="essentials,chrome,vscode,thunderbird,vlc"
-    ["designer"]="essentials,chrome,vscode,davinci-resolve,discord"
-    ["data_scientist"]="essentials,vscode,chrome,docker,dev-language,dev-storage,virtualbox"
+    ["minimalist"]="essentials,cli-tools,vlc,thunderbird"
+    ["fullstack"]="essentials,cli-tools,vscode,chrome,docker,dev-language,dev-storage"
+    ["content_creator"]="essentials,cli-tools,vscode,chrome,davinci-resolve,discord,vlc"
+    ["cloud_native"]="essentials,cli-tools,docker,vscode,dev-language,dev-storage"
+    ["gamer"]="essentials,cli-tools,steam,discord,chrome,vlc"
+    ["student"]="essentials,cli-tools,chrome,vscode,thunderbird,vlc"
+    ["designer"]="essentials,cli-tools,chrome,vscode,davinci-resolve,discord"
+    ["data_scientist"]="essentials,cli-tools,vscode,chrome,docker,dev-language,dev-storage,virtualbox"
 )
 
 # Application disk space requirements (in MB)
 declare -A APP_DISK_REQUIREMENTS=(
     ["essentials"]="100"
+    ["cli-tools"]="150"
     ["vscode"]="200"
     ["chrome"]="150"
     ["docker"]="500"
@@ -114,6 +115,7 @@ declare -A APP_DISK_REQUIREMENTS=(
 
 # Application architecture requirements
 declare -A APP_ARCH_REQUIREMENTS=(
+    ["cli-tools"]="amd64,arm64,armhf"
     ["davinci-resolve"]="amd64"
     ["steam"]="amd64"
     ["virtualbox"]="amd64,arm64"
@@ -150,31 +152,33 @@ show_personalities() {
         
         case "$personality" in
             "minimalist")
-                print_bullet "${BOLD}$personality${NC} - Essential development tools only ($app_count apps)"
+                print_bullet "${BOLD}$personality${NC} - Essential development tools ($app_count apps)"
                 ;;
             "fullstack")
-                print_bullet "${BOLD}$personality${NC} - Complete web development environment ($app_count apps)"
+                print_bullet "${BOLD}$personality${NC} - Complete web development environment($app_count apps)"
                 ;;
             "content_creator")
                 print_bullet "${BOLD}$personality${NC} - Media creation and development tools ($app_count apps)"
                 ;;
             "cloud_native")
-                print_bullet "${BOLD}$personality${NC} - Cloud and container focused ($app_count apps)"
+                print_bullet "${BOLD}$personality${NC} - Cloud and container focused($app_count apps)"
                 ;;
             "gamer")
                 print_bullet "${BOLD}$personality${NC} - Gaming and communication tools ($app_count apps)"
                 ;;
             "student")
-                print_bullet "${BOLD}$personality${NC} - Academic and productivity tools ($app_count apps)"
+                print_bullet "${BOLD}$personality${NC} - Academic and productivity tools($app_count apps)"
                 ;;
             "designer")
                 print_bullet "${BOLD}$personality${NC} - Design and creative tools ($app_count apps)"
                 ;;
             "data_scientist")
-                print_bullet "${BOLD}$personality${NC} - Data analysis and machine learning tools ($app_count apps)"
+                print_bullet "${BOLD}$personality${NC} - Data analysis and ML tools($app_count apps)"
                 ;;
         esac
     done
+    echo ""
+    print_info "All personalities now include modern CLI tools: fzf, zoxide, ripgrep, eza, fd, fastfetch, btop"
     echo ""
 }
 
@@ -361,6 +365,7 @@ prepare_app_script() {
         "install/development/${app}.sh"
         "install/gaming/${app}.sh"
         "install/video/${app}.sh"
+        "install/terminal/${app}.sh"
     )
     
     for path in "${possible_paths[@]}"; do
@@ -393,6 +398,7 @@ install_app_with_progress() {
         "install/development/${app}.sh"
         "install/gaming/${app}.sh"
         "install/video/${app}.sh"
+        "install/terminal/${app}.sh"
     )
     
     for path in "${possible_paths[@]}"; do
@@ -556,6 +562,13 @@ configure_environment() {
             print_success "Data science environment configured"
             ;;
     esac
+    
+    # CLI tools are now available in all personalities
+    if command -v fzf >/dev/null 2>&1; then
+        print_step "Enhanced CLI tools are ready!"
+        print_info "Use 'fzf' for fuzzy finding, 'z <dir>' for smart directory jumping"
+        print_info "Run 'fastfetch' for system info, 'btop' for system monitoring"
+    fi
 }
 
 # Main function with enhanced flow
@@ -600,6 +613,8 @@ main() {
         if [[ "$personality" == *"dev"* ]] || [ "$personality" = "fullstack" ]; then
             print_bullet "Consider configuring your development tools"
         fi
+        
+        print_bullet "Modern CLI tools are available: fzf, zoxide, ripgrep, eza, fd, fastfetch, btop"
     else
         print_header "Installation Completed with Issues"
         print_warning "Some applications failed to install"
