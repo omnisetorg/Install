@@ -86,14 +86,14 @@ EOF
 
 # Personalities and their default tools
 declare -A PERSONALITIES=(
-    ["minimalist"]="essentials,cli-tools,vlc,thunderbird"
-    ["fullstack"]="essentials,cli-tools,vscode,chrome,docker,dev-language,dev-storage"
-    ["content_creator"]="essentials,cli-tools,vscode,chrome,davinci-resolve,discord,vlc"
-    ["cloud_native"]="essentials,cli-tools,docker,vscode,dev-language,dev-storage"
-    ["gamer"]="essentials,cli-tools,steam,discord,chrome,vlc"
-    ["student"]="essentials,cli-tools,chrome,vscode,thunderbird,vlc"
-    ["designer"]="essentials,cli-tools,chrome,vscode,davinci-resolve,discord"
-    ["data_scientist"]="essentials,cli-tools,vscode,chrome,docker,dev-language,dev-storage,virtualbox"
+    ["minimalist"]="essentials,cli-tools,vicinae,vlc,thunderbird"
+    ["fullstack"]="essentials,cli-tools,vicinae,vscode,chrome,docker,dev-language,dev-storage"
+    ["content_creator"]="essentials,cli-tools,vicinae,vscode,chrome,davinci-resolve,discord,vlc"
+    ["cloud_native"]="essentials,cli-tools,vicinae,docker,vscode,dev-language,dev-storage"
+    ["gamer"]="essentials,cli-tools,vicinae,steam,discord,chrome,vlc"
+    ["student"]="essentials,cli-tools,vicinae,chrome,vscode,thunderbird,vlc"
+    ["designer"]="essentials,cli-tools,vicinae,chrome,vscode,davinci-resolve,discord"
+    ["data_scientist"]="essentials,cli-tools,vicinae,vscode,chrome,docker,dev-language,dev-storage,virtualbox"
 )
 
 # Application disk space requirements (in MB)
