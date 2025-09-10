@@ -108,6 +108,7 @@ declare -A APP_DISK_REQUIREMENTS=(
     ["davinci-resolve"]="1500"
     ["discord"]="100"
     ["vlc"]="50"
+    ["vicinae"]="50"
     ["steam"]="1000"
     ["thunderbird"]="100"
     ["virtualbox"]="200"
@@ -118,6 +119,7 @@ declare -A APP_ARCH_REQUIREMENTS=(
     ["cli-tools"]="amd64,arm64,armhf"
     ["davinci-resolve"]="amd64"
     ["steam"]="amd64"
+    ["vicinae"]="amd64"
     ["virtualbox"]="amd64,arm64"
 )
 
