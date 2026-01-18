@@ -6,11 +6,34 @@
 
 // Modules that have icons available
 const ModuleIcons = [
-    'docker', 'nodejs', 'python', 'go', 'rust', 'php', 'vscode',
-    'chrome', 'firefox', 'postgresql', 'mysql', 'redis', 'mongodb',
+    // CLI & Terminals
+    'essentials', 'modern-cli', 'lazygit', 'alacritty', 'kitty', 'wezterm', 'ghostty',
+    // Editors
+    'vscode', 'cursor', 'zed', 'sublime', 'neovim', 'helix',
+    // Browsers
+    'chrome', 'firefox', 'brave',
+    // Development
+    'docker', 'nodejs', 'python', 'go', 'rust', 'php', 'java', 'dotnet',
+    // Dev Tools
+    'postman', 'dbeaver', 'insomnia',
+    // DevOps
+    'kubernetes', 'helm', 'terraform', 'ansible', 'tailscale', 'wireguard',
+    // Databases
+    'postgresql', 'mysql', 'mariadb', 'redis', 'valkey', 'mongodb', 'sqlite',
+    // Communication
     'discord', 'slack', 'telegram', 'zoom', 'signal', 'thunderbird',
-    'gimp', 'inkscape', 'blender', 'obs', 'kdenlive', 'audacity',
-    'steam', 'lutris', 'vlc', 'virtualbox', 'git', 'essentials', 'modern-cli'
+    // Productivity
+    'libreoffice', 'obsidian', 'notion', 'bitwarden',
+    // Creative
+    'gimp', 'inkscape', 'figma', 'blender', 'obs', 'kdenlive', 'audacity',
+    // Media
+    'vlc', 'spotify',
+    // Gaming
+    'steam', 'lutris',
+    // System
+    'virtualbox', 'syncthing', 'qbittorrent',
+    // Misc
+    'git', 'tmux'
 ];
 
 // Get icon URL for a module
@@ -51,38 +74,87 @@ function createIconElement(moduleId, size = 24) {
 // Fallback emojis for modules without icons
 function getFallbackEmoji(moduleId) {
     const emojis = {
+        // CLI
+        essentials: '⚡',
+        'modern-cli': '✨',
+        lazygit: '🔀',
+        // Terminals
+        alacritty: '💻',
+        kitty: '🐱',
+        wezterm: '💻',
+        ghostty: '👻',
+        // Editors
+        vscode: '💻',
+        cursor: '🤖',
+        zed: '⚡',
+        sublime: '📝',
+        neovim: '📗',
+        helix: '🌀',
+        // Browsers
+        chrome: '🌐',
+        firefox: '🦊',
+        brave: '🦁',
+        // Development
         docker: '🐳',
         nodejs: '💚',
         python: '🐍',
         go: '🔵',
         rust: '🦀',
         php: '🐘',
-        vscode: '💻',
-        chrome: '🌐',
-        firefox: '🦊',
+        java: '☕',
+        dotnet: '🔷',
+        // Dev Tools
+        postman: '📮',
+        dbeaver: '🦫',
+        insomnia: '💜',
+        // DevOps
+        kubernetes: '☸️',
+        helm: '⎈',
+        terraform: '🏗️',
+        ansible: '🔧',
+        tailscale: '🔗',
+        wireguard: '🔒',
+        // Databases
         postgresql: '🐘',
         mysql: '🐬',
+        mariadb: '🔱',
         redis: '🔴',
+        valkey: '🔑',
         mongodb: '🍃',
+        sqlite: '📦',
+        // Communication
         discord: '💬',
         slack: '💼',
         telegram: '✈️',
         zoom: '📹',
         signal: '🔒',
         thunderbird: '📧',
+        // Productivity
+        libreoffice: '📄',
+        obsidian: '💎',
+        notion: '📓',
+        bitwarden: '🔐',
+        // Creative
         gimp: '🎨',
         inkscape: '✒️',
+        figma: '🎨',
         blender: '🎬',
         obs: '📺',
         kdenlive: '🎞️',
         audacity: '🎵',
+        // Media
+        vlc: '▶️',
+        spotify: '🎵',
+        // Gaming
         steam: '🎮',
         lutris: '🎯',
-        vlc: '▶️',
+        // System
         virtualbox: '📦',
+        syncthing: '🔄',
+        qbittorrent: '⬇️',
+        // Misc
         git: '🔀',
-        essentials: '⚡',
-        'modern-cli': '✨'
+        tmux: '📟'
     };
     return emojis[moduleId] || '📦';
 }

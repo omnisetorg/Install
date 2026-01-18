@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "2.1.0",
   "generated": "2026-01-18T00:00:00Z",
   "categories": [
     {
@@ -12,6 +12,7 @@
           "id": "essentials",
           "name": "System Essentials",
           "description": "Core packages: build-essential, curl, wget, git, vim, htop, unzip",
+          "version": "1.0.0",
           "size_mb": 100,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["essential", "base", "core"],
@@ -29,6 +30,7 @@
           "id": "essentials",
           "name": "Essential CLI Tools",
           "description": "Core tools: curl, wget, git, vim, htop, jq, tmux",
+          "version": "1.0.0",
           "size_mb": 50,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["essential", "base"],
@@ -37,24 +39,141 @@
         {
           "id": "modern-cli",
           "name": "Modern CLI Tools",
-          "description": "Rust-powered replacements: fzf, ripgrep, eza, fd, bat, zoxide",
+          "description": "Rust-powered tools: fzf, ripgrep, eza, fd, bat, zoxide, delta",
+          "version": "1.0.0",
           "size_mb": 100,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["modern", "rust", "productivity"],
           "recommended": true
+        },
+        {
+          "id": "lazygit",
+          "name": "LazyGit",
+          "description": "Terminal UI for git commands",
+          "version": "0.44",
+          "size_mb": 20,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["git", "tui"]
         }
       ]
     },
     {
-      "id": "desktop",
-      "name": "Desktop Apps",
-      "icon": "monitor",
-      "description": "Desktop applications and browsers",
+      "id": "terminals",
+      "name": "Terminals",
+      "icon": "terminal",
+      "description": "Modern terminal emulators",
+      "modules": [
+        {
+          "id": "alacritty",
+          "name": "Alacritty",
+          "description": "GPU-accelerated terminal emulator",
+          "version": "0.15",
+          "size_mb": 30,
+          "arch": ["amd64", "arm64"],
+          "tags": ["terminal", "gpu", "rust"]
+        },
+        {
+          "id": "kitty",
+          "name": "Kitty",
+          "description": "Fast, feature-rich terminal",
+          "version": "0.37",
+          "size_mb": 40,
+          "arch": ["amd64", "arm64"],
+          "tags": ["terminal", "gpu"]
+        },
+        {
+          "id": "wezterm",
+          "name": "WezTerm",
+          "description": "GPU-accelerated terminal with multiplexing",
+          "version": "20240203",
+          "size_mb": 80,
+          "arch": ["amd64", "arm64"],
+          "tags": ["terminal", "gpu", "multiplexer"]
+        },
+        {
+          "id": "ghostty",
+          "name": "Ghostty",
+          "description": "Fast native terminal by Mitchell Hashimoto",
+          "version": "1.0",
+          "size_mb": 25,
+          "arch": ["amd64", "arm64"],
+          "tags": ["terminal", "native", "zig"]
+        }
+      ]
+    },
+    {
+      "id": "editors",
+      "name": "Code Editors",
+      "icon": "code",
+      "description": "Text editors and IDEs",
+      "modules": [
+        {
+          "id": "vscode",
+          "name": "VS Code",
+          "description": "Popular code editor by Microsoft",
+          "version": "1.96",
+          "size_mb": 200,
+          "arch": ["amd64", "arm64"],
+          "tags": ["editor", "ide", "popular"]
+        },
+        {
+          "id": "cursor",
+          "name": "Cursor",
+          "description": "AI-powered code editor (VS Code fork)",
+          "version": "0.44",
+          "size_mb": 250,
+          "arch": ["amd64", "arm64"],
+          "tags": ["editor", "ai", "popular"]
+        },
+        {
+          "id": "zed",
+          "name": "Zed",
+          "description": "High-performance editor by Atom creators",
+          "version": "0.167",
+          "size_mb": 100,
+          "arch": ["amd64", "arm64"],
+          "tags": ["editor", "rust", "fast"]
+        },
+        {
+          "id": "sublime",
+          "name": "Sublime Text",
+          "description": "Sophisticated text editor",
+          "version": "4",
+          "size_mb": 50,
+          "arch": ["amd64", "arm64"],
+          "tags": ["editor", "fast"]
+        },
+        {
+          "id": "neovim",
+          "name": "Neovim",
+          "description": "Hyperextensible Vim-based editor",
+          "version": "0.10",
+          "size_mb": 40,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["editor", "vim", "terminal"]
+        },
+        {
+          "id": "helix",
+          "name": "Helix",
+          "description": "Post-modern modal text editor",
+          "version": "24.07",
+          "size_mb": 30,
+          "arch": ["amd64", "arm64"],
+          "tags": ["editor", "modal", "rust"]
+        }
+      ]
+    },
+    {
+      "id": "browsers",
+      "name": "Browsers",
+      "icon": "globe",
+      "description": "Web browsers",
       "modules": [
         {
           "id": "chrome",
           "name": "Google Chrome",
-          "description": "Fast, secure browser by Google",
+          "description": "Fast browser by Google",
+          "version": "131",
           "size_mb": 150,
           "arch": ["amd64"],
           "tags": ["browser", "google"]
@@ -63,17 +182,19 @@
           "id": "firefox",
           "name": "Firefox",
           "description": "Privacy-focused browser by Mozilla",
+          "version": "134",
           "size_mb": 100,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["browser", "mozilla", "privacy"]
         },
         {
-          "id": "vscode",
-          "name": "VS Code",
-          "description": "Popular code editor by Microsoft",
-          "size_mb": 200,
+          "id": "brave",
+          "name": "Brave",
+          "description": "Privacy browser with ad blocking",
+          "version": "1.73",
+          "size_mb": 150,
           "arch": ["amd64", "arm64"],
-          "tags": ["editor", "ide", "popular"]
+          "tags": ["browser", "privacy", "crypto"]
         }
       ]
     },
@@ -87,6 +208,7 @@
           "id": "docker",
           "name": "Docker",
           "description": "Container platform for applications",
+          "version": "27.4",
           "size_mb": 500,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["containers", "devops"]
@@ -94,7 +216,8 @@
         {
           "id": "nodejs",
           "name": "Node.js",
-          "description": "JavaScript runtime via NVM (LTS)",
+          "description": "JavaScript runtime via NVM (LTS 22)",
+          "version": "22",
           "size_mb": 100,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["javascript", "runtime"]
@@ -102,7 +225,8 @@
         {
           "id": "python",
           "name": "Python",
-          "description": "Python 3 with pip, venv, and pyenv",
+          "description": "Python 3.13 with pip, venv, and uv",
+          "version": "3.13",
           "size_mb": 150,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["python", "runtime"]
@@ -110,7 +234,8 @@
         {
           "id": "go",
           "name": "Go",
-          "description": "Go programming language (official tarball)",
+          "description": "Go programming language",
+          "version": "1.23",
           "size_mb": 200,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["golang", "runtime"]
@@ -119,6 +244,7 @@
           "id": "rust",
           "name": "Rust",
           "description": "Rust programming language via rustup",
+          "version": "1.84",
           "size_mb": 300,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["rust", "runtime"]
@@ -126,10 +252,126 @@
         {
           "id": "php",
           "name": "PHP",
-          "description": "PHP 8.4 with common extensions and Composer",
+          "description": "PHP 8.4 with extensions and Composer",
+          "version": "8.4",
           "size_mb": 150,
           "arch": ["amd64", "arm64"],
           "tags": ["php", "runtime", "web"]
+        },
+        {
+          "id": "java",
+          "name": "Java (OpenJDK)",
+          "description": "Java 21 LTS via SDKMAN",
+          "version": "21",
+          "size_mb": 300,
+          "arch": ["amd64", "arm64"],
+          "tags": ["java", "runtime", "jvm"]
+        },
+        {
+          "id": "dotnet",
+          "name": ".NET SDK",
+          "description": ".NET 9 SDK for C#/F# development",
+          "version": "9.0",
+          "size_mb": 400,
+          "arch": ["amd64", "arm64"],
+          "tags": ["dotnet", "csharp", "runtime"]
+        }
+      ]
+    },
+    {
+      "id": "devtools",
+      "name": "Dev Tools",
+      "icon": "wrench",
+      "description": "Development utilities and API tools",
+      "modules": [
+        {
+          "id": "postman",
+          "name": "Postman",
+          "description": "API development and testing platform",
+          "version": "11",
+          "size_mb": 200,
+          "arch": ["amd64", "arm64"],
+          "tags": ["api", "testing", "rest"]
+        },
+        {
+          "id": "dbeaver",
+          "name": "DBeaver",
+          "description": "Universal database GUI tool",
+          "version": "24.3",
+          "size_mb": 200,
+          "arch": ["amd64", "arm64"],
+          "tags": ["database", "gui", "sql"]
+        },
+        {
+          "id": "insomnia",
+          "name": "Insomnia",
+          "description": "Open-source API client",
+          "version": "10",
+          "size_mb": 150,
+          "arch": ["amd64", "arm64"],
+          "tags": ["api", "rest", "graphql"]
+        }
+      ]
+    },
+    {
+      "id": "devops",
+      "name": "DevOps & Cloud",
+      "icon": "cloud",
+      "description": "Infrastructure and cloud tools",
+      "modules": [
+        {
+          "id": "kubernetes",
+          "name": "Kubernetes Tools",
+          "description": "kubectl, k9s, kubectx, kubens",
+          "version": "1.32",
+          "size_mb": 150,
+          "arch": ["amd64", "arm64"],
+          "tags": ["k8s", "containers", "cloud"]
+        },
+        {
+          "id": "helm",
+          "name": "Helm",
+          "description": "Kubernetes package manager",
+          "version": "3.16",
+          "size_mb": 50,
+          "arch": ["amd64", "arm64"],
+          "tags": ["k8s", "packages"]
+        },
+        {
+          "id": "terraform",
+          "name": "Terraform",
+          "description": "Infrastructure as Code tool",
+          "version": "1.10",
+          "size_mb": 100,
+          "arch": ["amd64", "arm64"],
+          "tags": ["iac", "cloud", "hashicorp"]
+        },
+        {
+          "id": "ansible",
+          "name": "Ansible",
+          "description": "IT automation platform",
+          "version": "10",
+          "size_mb": 100,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["automation", "config"]
+        },
+        {
+          "id": "tailscale",
+          "name": "Tailscale",
+          "description": "Zero-config VPN mesh network",
+          "version": "1.78",
+          "size_mb": 30,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["vpn", "networking"]
+        },
+        {
+          "id": "wireguard",
+          "name": "WireGuard",
+          "description": "Modern VPN protocol",
+          "version": "1.0",
+          "size_mb": 10,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["vpn", "networking"]
         }
       ]
     },
@@ -142,7 +384,8 @@
         {
           "id": "postgresql",
           "name": "PostgreSQL",
-          "description": "Advanced open-source database (Docker)",
+          "description": "Advanced database (Docker)",
+          "version": "17",
           "size_mb": 200,
           "arch": ["amd64", "arm64"],
           "tags": ["sql", "database"],
@@ -152,6 +395,17 @@
           "id": "mysql",
           "name": "MySQL",
           "description": "Popular relational database (Docker)",
+          "version": "9.1",
+          "size_mb": 200,
+          "arch": ["amd64", "arm64"],
+          "tags": ["sql", "database"],
+          "requires": ["docker"]
+        },
+        {
+          "id": "mariadb",
+          "name": "MariaDB",
+          "description": "MySQL-compatible database (Docker)",
+          "version": "11.6",
           "size_mb": 200,
           "arch": ["amd64", "arm64"],
           "tags": ["sql", "database"],
@@ -161,19 +415,40 @@
           "id": "redis",
           "name": "Redis",
           "description": "In-memory data store (Docker)",
+          "version": "7.4",
           "size_mb": 50,
           "arch": ["amd64", "arm64"],
           "tags": ["cache", "database"],
           "requires": ["docker"]
         },
         {
+          "id": "valkey",
+          "name": "Valkey",
+          "description": "Open-source Redis fork (Docker)",
+          "version": "8.0",
+          "size_mb": 50,
+          "arch": ["amd64", "arm64"],
+          "tags": ["cache", "database", "opensource"],
+          "requires": ["docker"]
+        },
+        {
           "id": "mongodb",
           "name": "MongoDB",
           "description": "Document database (Docker)",
+          "version": "8.0",
           "size_mb": 300,
           "arch": ["amd64", "arm64"],
           "tags": ["nosql", "database"],
           "requires": ["docker"]
+        },
+        {
+          "id": "sqlite",
+          "name": "SQLite Tools",
+          "description": "SQLite CLI and browser",
+          "version": "3.47",
+          "size_mb": 20,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["sql", "embedded"]
         }
       ]
     },
@@ -187,6 +462,7 @@
           "id": "discord",
           "name": "Discord",
           "description": "Voice, video, and text chat",
+          "version": "0.0.75",
           "size_mb": 100,
           "arch": ["amd64"],
           "tags": ["chat", "voice", "gaming"]
@@ -195,6 +471,7 @@
           "id": "slack",
           "name": "Slack",
           "description": "Team collaboration platform",
+          "version": "4.41",
           "size_mb": 150,
           "arch": ["amd64", "arm64"],
           "tags": ["chat", "work"]
@@ -203,6 +480,7 @@
           "id": "zoom",
           "name": "Zoom",
           "description": "Video conferencing",
+          "version": "6.3",
           "size_mb": 200,
           "arch": ["amd64"],
           "tags": ["video", "meetings"]
@@ -211,6 +489,7 @@
           "id": "telegram",
           "name": "Telegram",
           "description": "Secure messaging app",
+          "version": "5.9",
           "size_mb": 80,
           "arch": ["amd64", "arm64"],
           "tags": ["chat", "privacy"]
@@ -219,6 +498,7 @@
           "id": "signal",
           "name": "Signal",
           "description": "Private encrypted messenger",
+          "version": "7.36",
           "size_mb": 150,
           "arch": ["amd64"],
           "tags": ["chat", "privacy", "encrypted"]
@@ -227,9 +507,54 @@
           "id": "thunderbird",
           "name": "Thunderbird",
           "description": "Email client by Mozilla",
+          "version": "128",
           "size_mb": 100,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["email", "mozilla"]
+        }
+      ]
+    },
+    {
+      "id": "productivity",
+      "name": "Productivity",
+      "icon": "briefcase",
+      "description": "Office and note-taking apps",
+      "modules": [
+        {
+          "id": "libreoffice",
+          "name": "LibreOffice",
+          "description": "Full office suite",
+          "version": "24.8",
+          "size_mb": 500,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["office", "documents"]
+        },
+        {
+          "id": "obsidian",
+          "name": "Obsidian",
+          "description": "Knowledge base and note-taking",
+          "version": "1.7",
+          "size_mb": 150,
+          "arch": ["amd64", "arm64"],
+          "tags": ["notes", "markdown", "knowledge"]
+        },
+        {
+          "id": "notion",
+          "name": "Notion",
+          "description": "All-in-one workspace",
+          "version": "4.2",
+          "size_mb": 150,
+          "arch": ["amd64", "arm64"],
+          "tags": ["notes", "workspace", "wiki"]
+        },
+        {
+          "id": "bitwarden",
+          "name": "Bitwarden",
+          "description": "Open-source password manager",
+          "version": "2024.12",
+          "size_mb": 100,
+          "arch": ["amd64"],
+          "tags": ["passwords", "security"]
         }
       ]
     },
@@ -243,6 +568,7 @@
           "id": "gimp",
           "name": "GIMP",
           "description": "Image editor (Photoshop alternative)",
+          "version": "2.10",
           "size_mb": 150,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["images", "design"]
@@ -251,14 +577,25 @@
           "id": "inkscape",
           "name": "Inkscape",
           "description": "Vector graphics editor",
+          "version": "1.4",
           "size_mb": 100,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["vector", "design"]
         },
         {
+          "id": "figma",
+          "name": "Figma",
+          "description": "Collaborative design tool (unofficial)",
+          "version": "124",
+          "size_mb": 150,
+          "arch": ["amd64"],
+          "tags": ["design", "ui", "collaboration"]
+        },
+        {
           "id": "blender",
           "name": "Blender",
           "description": "3D creation suite",
+          "version": "4.3",
           "size_mb": 500,
           "arch": ["amd64", "arm64"],
           "tags": ["3d", "modeling", "animation"]
@@ -267,6 +604,7 @@
           "id": "obs",
           "name": "OBS Studio",
           "description": "Streaming and recording",
+          "version": "31",
           "size_mb": 200,
           "arch": ["amd64", "arm64"],
           "tags": ["streaming", "recording"]
@@ -275,6 +613,7 @@
           "id": "kdenlive",
           "name": "Kdenlive",
           "description": "Video editor by KDE",
+          "version": "24.12",
           "size_mb": 300,
           "arch": ["amd64", "arm64"],
           "tags": ["video", "editing"]
@@ -283,6 +622,7 @@
           "id": "audacity",
           "name": "Audacity",
           "description": "Audio editor and recorder",
+          "version": "3.7",
           "size_mb": 80,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["audio", "recording"]
@@ -293,15 +633,25 @@
       "id": "media",
       "name": "Media",
       "icon": "play",
-      "description": "Media players",
+      "description": "Media players and streaming",
       "modules": [
         {
           "id": "vlc",
           "name": "VLC",
           "description": "Universal media player",
+          "version": "3.0.21",
           "size_mb": 50,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["player", "video", "audio"]
+        },
+        {
+          "id": "spotify",
+          "name": "Spotify",
+          "description": "Music streaming client",
+          "version": "1.2",
+          "size_mb": 150,
+          "arch": ["amd64"],
+          "tags": ["music", "streaming"]
         }
       ]
     },
@@ -315,6 +665,7 @@
           "id": "steam",
           "name": "Steam",
           "description": "Gaming platform by Valve",
+          "version": "1.0",
           "size_mb": 1000,
           "arch": ["amd64"],
           "tags": ["gaming", "platform"]
@@ -323,6 +674,7 @@
           "id": "lutris",
           "name": "Lutris",
           "description": "Open gaming platform for Linux",
+          "version": "0.5.18",
           "size_mb": 100,
           "arch": ["amd64"],
           "tags": ["gaming", "wine"]
@@ -339,9 +691,28 @@
           "id": "virtualbox",
           "name": "VirtualBox",
           "description": "Virtual machine manager",
+          "version": "7.1",
           "size_mb": 200,
           "arch": ["amd64"],
           "tags": ["virtualization"]
+        },
+        {
+          "id": "syncthing",
+          "name": "Syncthing",
+          "description": "Continuous file synchronization",
+          "version": "1.28",
+          "size_mb": 30,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["sync", "files", "p2p"]
+        },
+        {
+          "id": "qbittorrent",
+          "name": "qBittorrent",
+          "description": "BitTorrent client",
+          "version": "5.0",
+          "size_mb": 50,
+          "arch": ["amd64", "arm64"],
+          "tags": ["torrent", "download"]
         }
       ]
     }
@@ -352,49 +723,56 @@
       "name": "Web Developer",
       "description": "Full-stack web development setup",
       "icon": "code",
-      "modules": ["base/essentials", "cli/essentials", "cli/modern-cli", "desktop/vscode", "development/docker", "development/nodejs", "desktop/chrome"]
+      "modules": ["essentials", "modern-cli", "vscode", "docker", "nodejs", "chrome", "postman"]
     },
     {
       "id": "php-developer",
       "name": "PHP Developer",
       "description": "PHP/WordPress development",
       "icon": "code",
-      "modules": ["base/essentials", "cli/essentials", "desktop/vscode", "development/docker", "development/php", "databases/mysql"]
+      "modules": ["essentials", "modern-cli", "vscode", "docker", "php", "mysql", "dbeaver"]
     },
     {
       "id": "python-developer",
       "name": "Python Developer",
       "description": "Python development environment",
       "icon": "code",
-      "modules": ["base/essentials", "cli/essentials", "cli/modern-cli", "desktop/vscode", "development/docker", "development/python", "databases/postgresql"]
+      "modules": ["essentials", "modern-cli", "vscode", "docker", "python", "postgresql", "postman"]
     },
     {
       "id": "devops",
       "name": "DevOps Engineer",
       "description": "Infrastructure and containers",
       "icon": "server",
-      "modules": ["base/essentials", "cli/essentials", "cli/modern-cli", "desktop/vscode", "development/docker", "development/go", "databases/postgresql", "databases/redis"]
+      "modules": ["essentials", "modern-cli", "vscode", "docker", "kubernetes", "terraform", "ansible", "tailscale"]
     },
     {
       "id": "content-creator",
       "name": "Content Creator",
       "description": "Streaming and video production",
       "icon": "video",
-      "modules": ["base/essentials", "creative/obs", "creative/kdenlive", "creative/audacity", "creative/gimp", "communication/discord"]
+      "modules": ["essentials", "obs", "kdenlive", "audacity", "gimp", "discord"]
     },
     {
       "id": "designer",
       "name": "Designer",
       "description": "Creative and design tools",
       "icon": "palette",
-      "modules": ["base/essentials", "creative/gimp", "creative/inkscape", "creative/blender", "desktop/chrome"]
+      "modules": ["essentials", "gimp", "inkscape", "blender", "figma", "chrome"]
     },
     {
       "id": "minimal",
       "name": "Minimal",
       "description": "Just the essentials",
       "icon": "box",
-      "modules": ["base/essentials", "cli/essentials", "cli/modern-cli"]
+      "modules": ["essentials", "modern-cli", "neovim"]
+    },
+    {
+      "id": "power-user",
+      "name": "Power User",
+      "description": "Modern terminal-first workflow",
+      "icon": "zap",
+      "modules": ["essentials", "modern-cli", "neovim", "lazygit", "ghostty", "docker"]
     }
   ]
 }
