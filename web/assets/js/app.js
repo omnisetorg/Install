@@ -9,12 +9,18 @@ class OmniSetSelector {
         this.categories = [];
         this.presets = [];
         this.selected = new Map(); // moduleId -> options
-        this.baseUrl = 'https://omniset.io';
+        this.baseUrl = 'https://omniset.org';
+        this.localMode = false;
 
         this.init();
     }
 
     async init() {
+        // Auto-detect local mode (localhost or explicit param)
+        const url = new URL(window.location.href);
+        const isLocalhost = ['localhost', '127.0.0.1'].includes(url.hostname);
+        this.localMode = isLocalhost || url.searchParams.get('mode') === 'local';
+
         // Load modules data
         await this.loadModules();
 
@@ -30,6 +36,46 @@ class OmniSetSelector {
 
         // Initialize theme
         this.initTheme();
+
+        // Setup local mode UI
+        if (this.localMode) {
+            this.setupLocalMode();
+        }
+    }
+
+    setupLocalMode() {
+        // Change generate button to install button
+        const generateBtn = document.getElementById('generate-btn');
+        if (generateBtn) {
+            generateBtn.querySelector('span').textContent = 'Install Selected';
+            generateBtn.id = 'install-btn';
+        }
+
+        // Add connected indicator to header
+        const headerActions = document.querySelector('.header-actions');
+        if (headerActions) {
+            const badge = document.createElement('span');
+            badge.className = 'connected-badge';
+
+            const dot = document.createElement('span');
+            dot.className = 'pulse-dot';
+
+            badge.appendChild(dot);
+            badge.appendChild(document.createTextNode(' Terminal Connected'));
+
+            headerActions.insertBefore(badge, headerActions.firstChild);
+        }
+
+        // Update hero text
+        const heroContent = document.querySelector('.hero-content');
+        if (heroContent) {
+            heroContent.querySelector('h2').textContent = 'Select your modules';
+            heroContent.querySelector('p').textContent = 'Choose what to install, then click "Install Selected" to start the installation.';
+        }
+
+        // Hide the share tab in modal (not useful in local mode)
+        const shareTab = document.querySelector('[data-tab="share"]');
+        if (shareTab) shareTab.style.display = 'none';
     }
 
     async loadModules() {
@@ -70,11 +116,12 @@ class OmniSetSelector {
         if (!container) return;
 
         const icons = {
-            'code': '💻',
+            'code': '👨‍💻',
             'server': '🖥️',
             'palette': '🎨',
             'box': '📦',
-            'default': '🚀'
+            'video': '🎬',
+            'default': '⚡'
         };
 
         // Clear container
@@ -111,13 +158,14 @@ class OmniSetSelector {
         if (!container) return;
 
         const icons = {
+            'base': '🏠',
             'cli': '💻',
+            'desktop': '🖥️',
             'development': '🔧',
-            'browsers': '🌐',
+            'databases': '🗄️',
             'communication': '💬',
             'creative': '🎨',
             'media': '▶️',
-            'databases': '🗄️',
             'gaming': '🎮',
             'system': '⚙️'
         };
@@ -183,6 +231,11 @@ class OmniSetSelector {
         checkbox.className = 'module-checkbox';
         checkbox.textContent = isSelected ? '✓' : '';
 
+        // Icon
+        const iconWrapper = document.createElement('div');
+        iconWrapper.className = 'module-icon-wrapper';
+        iconWrapper.appendChild(createIconElement(module.id, 32));
+
         // Info container
         const info = document.createElement('div');
         info.className = 'module-info';
@@ -215,6 +268,7 @@ class OmniSetSelector {
         info.appendChild(meta);
 
         card.appendChild(checkbox);
+        card.appendChild(iconWrapper);
         card.appendChild(info);
 
         card.addEventListener('click', () => this.toggleModule(module.id));
@@ -311,7 +365,10 @@ class OmniSetSelector {
         document.getElementById('total-size').textContent = size;
 
         document.getElementById('clear-btn').disabled = count === 0;
-        document.getElementById('generate-btn').disabled = count === 0;
+
+        // Handle both generate-btn (online) and install-btn (local mode)
+        const actionBtn = document.getElementById('generate-btn') || document.getElementById('install-btn');
+        if (actionBtn) actionBtn.disabled = count === 0;
     }
 
     calculateTotalSize() {
@@ -371,9 +428,13 @@ class OmniSetSelector {
     // ═══════════════════════════════════════════════════════════
 
     setupEventListeners() {
-        // Generate button
+        // Generate/Install button
         document.getElementById('generate-btn').addEventListener('click', () => {
-            this.showOutputModal();
+            if (this.localMode) {
+                this.sendToLocalServer();
+            } else {
+                this.showOutputModal();
+            }
         });
 
         // Clear button
@@ -500,6 +561,86 @@ class OmniSetSelector {
             document.getElementById('theme-toggle').textContent = '☀️';
             localStorage.setItem('omniset-theme', 'dark');
         }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // Local Mode
+    // ═══════════════════════════════════════════════════════════
+
+    async sendToLocalServer() {
+        const modules = Array.from(this.selected.keys());
+
+        if (modules.length === 0) {
+            this.showError('Please select at least one module');
+            return;
+        }
+
+        // Show sending state
+        const btn = document.getElementById('install-btn');
+        const originalText = btn.textContent;
+        btn.textContent = '⏳ Sending...';
+        btn.disabled = true;
+
+        try {
+            const response = await fetch('/api/install', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ modules })
+            });
+
+            if (response.ok) {
+                btn.textContent = '✓ Sent to terminal!';
+                btn.style.background = '#22c55e';
+
+                // Show success message
+                this.showLocalModeSuccess();
+            } else {
+                throw new Error('Failed to send selection');
+            }
+        } catch (error) {
+            btn.textContent = originalText;
+            btn.disabled = false;
+            this.showError('Failed to send selection. Make sure the terminal is waiting.');
+        }
+    }
+
+    showLocalModeSuccess() {
+        // Create overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'success-overlay';
+
+        const box = document.createElement('div');
+        box.className = 'success-box';
+
+        const icon = document.createElement('div');
+        icon.className = 'success-icon';
+        icon.textContent = '✓';
+
+        const title = document.createElement('h2');
+        title.className = 'success-title';
+        title.textContent = 'Installation Started!';
+
+        const msg = document.createElement('p');
+        msg.className = 'success-message';
+        msg.textContent = 'Return to your terminal to see the installation progress. You can close this tab.';
+
+        const hint = document.createElement('p');
+        hint.className = 'success-hint';
+        hint.textContent = 'This page will close automatically...';
+
+        box.appendChild(icon);
+        box.appendChild(title);
+        box.appendChild(msg);
+        box.appendChild(hint);
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+
+        // Auto-close after 5 seconds
+        setTimeout(() => {
+            window.close();
+        }, 5000);
     }
 
     // ═══════════════════════════════════════════════════════════

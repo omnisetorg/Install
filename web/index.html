@@ -3,40 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniSet - Module Selector</title>
+    <title>OmniSet - Linux Setup Made Easy</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
 </head>
 <body>
     <div class="app">
         <!-- Header -->
         <header class="header">
-            <div class="header-brand">
-                <span class="logo">🚀</span>
-                <h1>OmniSet</h1>
-                <span class="version">v2.0</span>
-            </div>
-            <div class="header-actions">
-                <button class="btn btn-ghost" id="theme-toggle" title="Toggle theme">🌙</button>
-                <a href="https://github.com/user/omniset" class="btn btn-ghost" target="_blank">GitHub</a>
+            <div class="header-content">
+                <div class="header-brand">
+                    <span class="logo">⚡</span>
+                    <div class="brand-text">
+                        <h1>OmniSet</h1>
+                        <span class="tagline">Linux Setup Made Easy</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-icon" id="theme-toggle" title="Toggle theme">🌙</button>
+                    <a href="https://github.com/omnisetorg/omniset" class="btn btn-outline" target="_blank">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                        GitHub
+                    </a>
+                </div>
             </div>
         </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Build your perfect Linux environment</h2>
+                <p>Select the tools you need, get a single install command. No more hours of manual setup.</p>
+            </div>
+        </section>
 
         <!-- Main Content -->
         <main class="main">
             <!-- Quick Start Presets -->
-            <section class="presets-section">
-                <h2>Quick Start</h2>
+            <section class="section presets-section">
+                <div class="section-header">
+                    <h2>🚀 Quick Start Presets</h2>
+                    <p>Choose a preset to get started quickly</p>
+                </div>
                 <div class="presets-grid" id="presets-container">
                     <!-- Populated by JS -->
                 </div>
             </section>
 
             <!-- Module Selector -->
-            <section class="selector-section">
-                <div class="selector-header">
-                    <h2>Select Modules</h2>
+            <section class="section selector-section">
+                <div class="section-header">
+                    <h2>📦 All Modules</h2>
                     <div class="search-box">
+                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                         <input type="text" id="search-input" placeholder="Search modules...">
                     </div>
                 </div>
@@ -49,18 +68,27 @@
 
         <!-- Sticky Footer with Summary -->
         <footer class="footer" id="summary-footer">
-            <div class="summary">
+            <div class="footer-content">
                 <div class="summary-stats">
-                    <span class="stat">
-                        <strong id="selected-count">0</strong> modules
-                    </span>
-                    <span class="stat">
-                        <strong id="total-size">0</strong> MB
-                    </span>
+                    <div class="stat">
+                        <span class="stat-value" id="selected-count">0</span>
+                        <span class="stat-label">modules</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <span class="stat-value" id="total-size">0</span>
+                        <span class="stat-label">MB estimated</span>
+                    </div>
                 </div>
                 <div class="summary-actions">
-                    <button class="btn btn-secondary" id="clear-btn" disabled>Clear All</button>
-                    <button class="btn btn-primary" id="generate-btn" disabled>Generate Command</button>
+                    <button class="btn btn-ghost" id="clear-btn" disabled>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+                        Clear
+                    </button>
+                    <button class="btn btn-primary btn-lg" id="generate-btn" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                        <span>Generate Command</span>
+                    </button>
                 </div>
             </div>
         </footer>
@@ -70,41 +98,47 @@
             <div class="modal-backdrop" onclick="closeModal()"></div>
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>Installation Command</h3>
-                    <button class="btn btn-ghost" onclick="closeModal()">✕</button>
+                    <h3>🎉 Your Install Command</h3>
+                    <button class="btn-icon" onclick="closeModal()">✕</button>
                 </div>
                 <div class="modal-body">
                     <div class="output-tabs">
                         <button class="tab active" data-tab="command">Command</button>
-                        <button class="tab" data-tab="config">Config File</button>
+                        <button class="tab" data-tab="config">Config</button>
                         <button class="tab" data-tab="share">Share</button>
                     </div>
 
                     <div class="tab-content active" id="tab-command">
-                        <p class="output-label">Copy and run this command in your terminal:</p>
+                        <p class="output-hint">Run this in your terminal:</p>
                         <div class="code-block">
                             <code id="output-command"></code>
-                            <button class="copy-btn" onclick="copyCommand()">📋 Copy</button>
+                            <button class="copy-btn" onclick="copyCommand()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                Copy
+                            </button>
                         </div>
                     </div>
 
                     <div class="tab-content" id="tab-config">
-                        <p class="output-label">Download this config file and run with:</p>
-                        <div class="code-block small">
-                            <code>curl -sL omniset.io/i | bash -s -- --config config.yaml</code>
+                        <p class="output-hint">Save as config.yaml and run:</p>
+                        <div class="code-block code-block-sm">
+                            <code>omniset install --from-config config.yaml</code>
                         </div>
                         <pre class="config-preview" id="output-config"></pre>
-                        <button class="btn btn-secondary" onclick="downloadConfig()">📥 Download config.yaml</button>
+                        <button class="btn btn-outline btn-block" onclick="downloadConfig()">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                            Download config.yaml
+                        </button>
                     </div>
 
                     <div class="tab-content" id="tab-share">
-                        <p class="output-label">Share this link:</p>
+                        <p class="output-hint">Share this selection:</p>
                         <div class="code-block">
                             <code id="output-share-url"></code>
-                            <button class="copy-btn" onclick="copyShareUrl()">📋 Copy</button>
-                        </div>
-                        <div class="qr-container">
-                            <div id="qr-code"></div>
+                            <button class="copy-btn" onclick="copyShareUrl()">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+                                Copy
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -112,6 +146,7 @@
         </div>
     </div>
 
+    <script src="assets/js/icons.js"></script>
     <script src="assets/js/app.js"></script>
 </body>
 </html>

@@ -7,10 +7,18 @@ Modular Linux setup tool. Select modules and install them with one command.
 
 ## Quick Start
 
+**One command - opens browser, you select, it installs:**
+
+```bash
+curl -sL https://omniset.org/install | bash
+```
+
+**Or clone and use CLI:**
 ```bash
 git clone https://github.com/omnisetorg/omniset.git
 cd omniset
-./bin/omniset install docker nodejs vscode
+./bin/omniset install --web        # browser selection
+./bin/omniset install docker vscode nodejs   # direct
 ```
 
 ## Commands

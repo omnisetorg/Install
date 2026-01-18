@@ -15,6 +15,7 @@ source "${OMNISET_ROOT}/lib/ui/print.sh"
 source "${OMNISET_ROOT}/lib/system/detect.sh"
 source "${OMNISET_ROOT}/lib/system/packages.sh"
 source "${OMNISET_ROOT}/lib/install/modules.sh"
+source "${OMNISET_ROOT}/lib/web/server.sh"
 
 # Initialize
 init_ui
@@ -44,12 +45,14 @@ COMMANDS:
 
 INSTALL OPTIONS:
     omniset install <module1> [module2] ...   Install specific modules
+    omniset install --web                     Open browser to select modules
     omniset install --from-url <url>          Install from URL-encoded selection
     omniset install --from-config <file>      Install from YAML config file
     omniset install --interactive             Interactive TUI selector
 
 EXAMPLES:
     omniset install vscode docker chrome
+    omniset install --web
     omniset install --interactive
     omniset list --category development
     omniset info docker
@@ -62,6 +65,7 @@ EOF
 cmd_install() {
     local modules=()
     local interactive=false
+    local web_mode=false
     local from_url=""
     local from_config=""
     local force=false
@@ -72,6 +76,10 @@ cmd_install() {
         case "$1" in
             --interactive|-i)
                 interactive=true
+                shift
+                ;;
+            --web|-w)
+                web_mode=true
                 shift
                 ;;
             --from-url)
@@ -94,6 +102,7 @@ cmd_install() {
                 echo "Usage: omniset install [OPTIONS] [MODULES...]"
                 echo ""
                 echo "Options:"
+                echo "  --web, -w            Open browser to select modules"
                 echo "  --interactive, -i    Use interactive TUI selector"
                 echo "  --from-url URL       Install from URL-encoded selection"
                 echo "  --from-config FILE   Install from YAML config file"
@@ -115,7 +124,14 @@ cmd_install() {
     print_banner
 
     # Determine modules to install
-    if [[ -n "$from_url" ]]; then
+    if [[ "$web_mode" == true ]]; then
+        # Start local web server and wait for selection
+        if start_web_server; then
+            modules=($(get_selected_modules))
+        else
+            return 1
+        fi
+    elif [[ -n "$from_url" ]]; then
         # Decode URL-encoded modules
         IFS=',' read -ra modules <<< "$from_url"
     elif [[ -n "$from_config" ]]; then
@@ -132,9 +148,9 @@ cmd_install() {
     elif [[ ${#modules[@]} -eq 0 ]]; then
         # No modules specified - show help
         print_info "No modules specified. Options:"
+        print_bullet "omniset install --web            (open browser)"
+        print_bullet "omniset install --interactive    (terminal UI)"
         print_bullet "omniset install <module1> <module2> ..."
-        print_bullet "omniset install --interactive"
-        print_bullet "omniset web  (open web selector)"
         return 1
     fi
 

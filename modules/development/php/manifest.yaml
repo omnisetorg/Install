@@ -1,10 +1,10 @@
 name: php
 display_name: PHP
-version: "8.4"
+version: "8.5"
 category: development
 description: PHP programming language with common extensions
 
-icon: code
+icon: php
 tags:
   - php
   - web
@@ -24,15 +24,20 @@ install_methods:
     priority: 1
     ppa: ondrej/php
     packages:
-      - php8.4
-      - php8.4-cli
-      - php8.4-common
-      - php8.4-curl
-      - php8.4-mbstring
-      - php8.4-xml
-      - php8.4-zip
-      - php8.4-mysql
-      - php8.4-pgsql
+      - php8.5
+      - php8.5-cli
+      - php8.5-common
+      - php8.5-curl
+      - php8.5-mbstring
+      - php8.5-xml
+      - php8.5-zip
+      - php8.5-mysql
+      - php8.5-pgsql
+      - php8.5-sqlite3
+      - php8.5-gd
+      - php8.5-intl
+      - php8.5-bcmath
+      - php8.5-fpm
 
 provides:
   commands:
