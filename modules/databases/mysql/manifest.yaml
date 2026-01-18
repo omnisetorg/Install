@@ -1,0 +1,35 @@
+name: mysql
+display_name: MySQL
+version: "8.4"
+category: databases
+description: Popular open-source relational database (via Docker)
+
+icon: database
+tags:
+  - database
+  - sql
+  - relational
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 200
+  ram_mb: 512
+  dependencies:
+    - docker
+
+install_methods:
+  - type: docker
+    priority: 1
+    image: mysql:8.4
+    ports:
+      - "3306:3306"
+
+provides:
+  commands:
+    - mysql
+  services:
+    - mysql

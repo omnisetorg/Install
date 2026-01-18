@@ -1,0 +1,69 @@
+name: nodejs
+display_name: Node.js
+version: lts
+category: development
+description: JavaScript runtime with npm package manager
+
+icon: code
+tags:
+  - javascript
+  - runtime
+  - npm
+  - web
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 100
+  ram_mb: 512
+  dependencies:
+    - curl
+
+install_methods:
+  - type: script
+    priority: 1
+    description: Install via NodeSource
+    url: https://deb.nodesource.com/setup_lts.x
+
+provides:
+  commands:
+    - node
+    - npm
+    - npx
+  packages:
+    - nodejs
+
+options:
+  - id: version
+    type: select
+    label: Node.js Version
+    choices:
+      - id: lts
+        label: LTS (Recommended)
+      - id: current
+        label: Current
+      - id: "18"
+        label: v18
+      - id: "20"
+        label: v20
+      - id: "22"
+        label: v22
+    default: lts
+
+  - id: global_packages
+    type: multiselect
+    label: Global Packages
+    choices:
+      - id: yarn
+        label: Yarn
+      - id: pnpm
+        label: pnpm
+      - id: typescript
+        label: TypeScript
+      - id: nodemon
+        label: Nodemon
+      - id: pm2
+        label: PM2

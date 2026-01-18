@@ -1,0 +1,37 @@
+name: inkscape
+display_name: Inkscape
+version: latest
+category: creative
+description: Vector graphics editor
+
+icon: palette
+tags:
+  - vector
+  - svg
+  - design
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 100
+  ram_mb: 512
+
+install_methods:
+  - type: apt_repo
+    priority: 1
+    ppa: inkscape.dev/stable
+    packages:
+      - inkscape
+
+  - type: apt
+    priority: 2
+    packages:
+      - inkscape
+
+provides:
+  commands:
+    - inkscape
+  desktop_entry: true

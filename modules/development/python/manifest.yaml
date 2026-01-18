@@ -1,0 +1,56 @@
+name: python
+display_name: Python
+version: "3"
+category: development
+description: Python 3 programming language with pip and venv
+
+icon: code
+tags:
+  - python
+  - runtime
+  - scripting
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 150
+  ram_mb: 256
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - python3
+      - python3-pip
+      - python3-venv
+      - python3-dev
+
+provides:
+  commands:
+    - python3
+    - pip3
+  packages:
+    - python3
+
+options:
+  - id: packages
+    type: multiselect
+    label: Python Packages
+    choices:
+      - id: virtualenv
+        label: virtualenv
+      - id: pipenv
+        label: Pipenv
+      - id: poetry
+        label: Poetry
+      - id: jupyter
+        label: Jupyter
+      - id: requests
+        label: Requests
+      - id: numpy
+        label: NumPy
+      - id: pandas
+        label: Pandas

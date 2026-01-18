@@ -1,0 +1,61 @@
+name: essentials
+display_name: Essential System Tools
+version: 1.0.0
+category: base
+description: Core utilities required for development and system administration
+
+icon: box
+tags:
+  - base
+  - essential
+  - core
+  - system
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 100
+  ram_mb: 256
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - git
+      - curl
+      - wget
+      - unzip
+      - zip
+      - tar
+      - gzip
+      - build-essential
+      - software-properties-common
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - lsb-release
+      - nano
+      - vim
+      - tree
+      - htop
+      - net-tools
+      - iputils-ping
+      - dnsutils
+      - jq
+      - bc
+
+provides:
+  commands:
+    - git
+    - curl
+    - wget
+    - vim
+    - htop
+    - jq
+  packages:
+    - git
+    - curl
+    - wget

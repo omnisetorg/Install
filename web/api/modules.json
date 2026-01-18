@@ -1,0 +1,400 @@
+{
+  "version": "2.0.0",
+  "generated": "2026-01-18T00:00:00Z",
+  "categories": [
+    {
+      "id": "base",
+      "name": "Base",
+      "icon": "box",
+      "description": "Essential system packages",
+      "modules": [
+        {
+          "id": "essentials",
+          "name": "System Essentials",
+          "description": "Core packages: build-essential, curl, wget, git, vim, htop, unzip",
+          "size_mb": 100,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["essential", "base", "core"],
+          "recommended": true
+        }
+      ]
+    },
+    {
+      "id": "cli",
+      "name": "CLI Tools",
+      "icon": "terminal",
+      "description": "Command-line tools and utilities",
+      "modules": [
+        {
+          "id": "essentials",
+          "name": "Essential CLI Tools",
+          "description": "Core tools: curl, wget, git, vim, htop, jq, tmux",
+          "size_mb": 50,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["essential", "base"],
+          "recommended": true
+        },
+        {
+          "id": "modern-cli",
+          "name": "Modern CLI Tools",
+          "description": "Rust-powered replacements: fzf, ripgrep, eza, fd, bat, zoxide",
+          "size_mb": 100,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["modern", "rust", "productivity"],
+          "recommended": true
+        }
+      ]
+    },
+    {
+      "id": "desktop",
+      "name": "Desktop Apps",
+      "icon": "monitor",
+      "description": "Desktop applications and browsers",
+      "modules": [
+        {
+          "id": "chrome",
+          "name": "Google Chrome",
+          "description": "Fast, secure browser by Google",
+          "size_mb": 150,
+          "arch": ["amd64"],
+          "tags": ["browser", "google"]
+        },
+        {
+          "id": "firefox",
+          "name": "Firefox",
+          "description": "Privacy-focused browser by Mozilla",
+          "size_mb": 100,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["browser", "mozilla", "privacy"]
+        },
+        {
+          "id": "vscode",
+          "name": "VS Code",
+          "description": "Popular code editor by Microsoft",
+          "size_mb": 200,
+          "arch": ["amd64", "arm64"],
+          "tags": ["editor", "ide", "popular"]
+        }
+      ]
+    },
+    {
+      "id": "development",
+      "name": "Development",
+      "icon": "code",
+      "description": "Programming languages and dev tools",
+      "modules": [
+        {
+          "id": "docker",
+          "name": "Docker",
+          "description": "Container platform for applications",
+          "size_mb": 500,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["containers", "devops"]
+        },
+        {
+          "id": "nodejs",
+          "name": "Node.js",
+          "description": "JavaScript runtime via NVM (LTS)",
+          "size_mb": 100,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["javascript", "runtime"]
+        },
+        {
+          "id": "python",
+          "name": "Python",
+          "description": "Python 3 with pip, venv, and pyenv",
+          "size_mb": 150,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["python", "runtime"]
+        },
+        {
+          "id": "go",
+          "name": "Go",
+          "description": "Go programming language (official tarball)",
+          "size_mb": 200,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["golang", "runtime"]
+        },
+        {
+          "id": "rust",
+          "name": "Rust",
+          "description": "Rust programming language via rustup",
+          "size_mb": 300,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["rust", "runtime"]
+        },
+        {
+          "id": "php",
+          "name": "PHP",
+          "description": "PHP 8.4 with common extensions and Composer",
+          "size_mb": 150,
+          "arch": ["amd64", "arm64"],
+          "tags": ["php", "runtime", "web"]
+        }
+      ]
+    },
+    {
+      "id": "databases",
+      "name": "Databases",
+      "icon": "database",
+      "description": "Database servers (via Docker)",
+      "modules": [
+        {
+          "id": "postgresql",
+          "name": "PostgreSQL",
+          "description": "Advanced open-source database (Docker)",
+          "size_mb": 200,
+          "arch": ["amd64", "arm64"],
+          "tags": ["sql", "database"],
+          "requires": ["docker"]
+        },
+        {
+          "id": "mysql",
+          "name": "MySQL",
+          "description": "Popular relational database (Docker)",
+          "size_mb": 200,
+          "arch": ["amd64", "arm64"],
+          "tags": ["sql", "database"],
+          "requires": ["docker"]
+        },
+        {
+          "id": "redis",
+          "name": "Redis",
+          "description": "In-memory data store (Docker)",
+          "size_mb": 50,
+          "arch": ["amd64", "arm64"],
+          "tags": ["cache", "database"],
+          "requires": ["docker"]
+        },
+        {
+          "id": "mongodb",
+          "name": "MongoDB",
+          "description": "Document database (Docker)",
+          "size_mb": 300,
+          "arch": ["amd64", "arm64"],
+          "tags": ["nosql", "database"],
+          "requires": ["docker"]
+        }
+      ]
+    },
+    {
+      "id": "communication",
+      "name": "Communication",
+      "icon": "message",
+      "description": "Chat, video, and email apps",
+      "modules": [
+        {
+          "id": "discord",
+          "name": "Discord",
+          "description": "Voice, video, and text chat",
+          "size_mb": 100,
+          "arch": ["amd64"],
+          "tags": ["chat", "voice", "gaming"]
+        },
+        {
+          "id": "slack",
+          "name": "Slack",
+          "description": "Team collaboration platform",
+          "size_mb": 150,
+          "arch": ["amd64", "arm64"],
+          "tags": ["chat", "work"]
+        },
+        {
+          "id": "zoom",
+          "name": "Zoom",
+          "description": "Video conferencing",
+          "size_mb": 200,
+          "arch": ["amd64"],
+          "tags": ["video", "meetings"]
+        },
+        {
+          "id": "telegram",
+          "name": "Telegram",
+          "description": "Secure messaging app",
+          "size_mb": 80,
+          "arch": ["amd64", "arm64"],
+          "tags": ["chat", "privacy"]
+        },
+        {
+          "id": "signal",
+          "name": "Signal",
+          "description": "Private encrypted messenger",
+          "size_mb": 150,
+          "arch": ["amd64"],
+          "tags": ["chat", "privacy", "encrypted"]
+        },
+        {
+          "id": "thunderbird",
+          "name": "Thunderbird",
+          "description": "Email client by Mozilla",
+          "size_mb": 100,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["email", "mozilla"]
+        }
+      ]
+    },
+    {
+      "id": "creative",
+      "name": "Creative",
+      "icon": "palette",
+      "description": "Design, video, and audio tools",
+      "modules": [
+        {
+          "id": "gimp",
+          "name": "GIMP",
+          "description": "Image editor (Photoshop alternative)",
+          "size_mb": 150,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["images", "design"]
+        },
+        {
+          "id": "inkscape",
+          "name": "Inkscape",
+          "description": "Vector graphics editor",
+          "size_mb": 100,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["vector", "design"]
+        },
+        {
+          "id": "blender",
+          "name": "Blender",
+          "description": "3D creation suite",
+          "size_mb": 500,
+          "arch": ["amd64", "arm64"],
+          "tags": ["3d", "modeling", "animation"]
+        },
+        {
+          "id": "obs",
+          "name": "OBS Studio",
+          "description": "Streaming and recording",
+          "size_mb": 200,
+          "arch": ["amd64", "arm64"],
+          "tags": ["streaming", "recording"]
+        },
+        {
+          "id": "kdenlive",
+          "name": "Kdenlive",
+          "description": "Video editor by KDE",
+          "size_mb": 300,
+          "arch": ["amd64", "arm64"],
+          "tags": ["video", "editing"]
+        },
+        {
+          "id": "audacity",
+          "name": "Audacity",
+          "description": "Audio editor and recorder",
+          "size_mb": 80,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["audio", "recording"]
+        }
+      ]
+    },
+    {
+      "id": "media",
+      "name": "Media",
+      "icon": "play",
+      "description": "Media players",
+      "modules": [
+        {
+          "id": "vlc",
+          "name": "VLC",
+          "description": "Universal media player",
+          "size_mb": 50,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["player", "video", "audio"]
+        }
+      ]
+    },
+    {
+      "id": "gaming",
+      "name": "Gaming",
+      "icon": "gamepad",
+      "description": "Gaming platforms and tools",
+      "modules": [
+        {
+          "id": "steam",
+          "name": "Steam",
+          "description": "Gaming platform by Valve",
+          "size_mb": 1000,
+          "arch": ["amd64"],
+          "tags": ["gaming", "platform"]
+        },
+        {
+          "id": "lutris",
+          "name": "Lutris",
+          "description": "Open gaming platform for Linux",
+          "size_mb": 100,
+          "arch": ["amd64"],
+          "tags": ["gaming", "wine"]
+        }
+      ]
+    },
+    {
+      "id": "system",
+      "name": "System",
+      "icon": "settings",
+      "description": "System utilities",
+      "modules": [
+        {
+          "id": "virtualbox",
+          "name": "VirtualBox",
+          "description": "Virtual machine manager",
+          "size_mb": 200,
+          "arch": ["amd64"],
+          "tags": ["virtualization"]
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "id": "web-developer",
+      "name": "Web Developer",
+      "description": "Full-stack web development setup",
+      "icon": "code",
+      "modules": ["base/essentials", "cli/essentials", "cli/modern-cli", "desktop/vscode", "development/docker", "development/nodejs", "desktop/chrome"]
+    },
+    {
+      "id": "php-developer",
+      "name": "PHP Developer",
+      "description": "PHP/WordPress development",
+      "icon": "code",
+      "modules": ["base/essentials", "cli/essentials", "desktop/vscode", "development/docker", "development/php", "databases/mysql"]
+    },
+    {
+      "id": "python-developer",
+      "name": "Python Developer",
+      "description": "Python development environment",
+      "icon": "code",
+      "modules": ["base/essentials", "cli/essentials", "cli/modern-cli", "desktop/vscode", "development/docker", "development/python", "databases/postgresql"]
+    },
+    {
+      "id": "devops",
+      "name": "DevOps Engineer",
+      "description": "Infrastructure and containers",
+      "icon": "server",
+      "modules": ["base/essentials", "cli/essentials", "cli/modern-cli", "desktop/vscode", "development/docker", "development/go", "databases/postgresql", "databases/redis"]
+    },
+    {
+      "id": "content-creator",
+      "name": "Content Creator",
+      "description": "Streaming and video production",
+      "icon": "video",
+      "modules": ["base/essentials", "creative/obs", "creative/kdenlive", "creative/audacity", "creative/gimp", "communication/discord"]
+    },
+    {
+      "id": "designer",
+      "name": "Designer",
+      "description": "Creative and design tools",
+      "icon": "palette",
+      "modules": ["base/essentials", "creative/gimp", "creative/inkscape", "creative/blender", "desktop/chrome"]
+    },
+    {
+      "id": "minimal",
+      "name": "Minimal",
+      "description": "Just the essentials",
+      "icon": "box",
+      "modules": ["base/essentials", "cli/essentials", "cli/modern-cli"]
+    }
+  ]
+}

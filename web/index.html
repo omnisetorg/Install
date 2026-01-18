@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniSet - Module Selector</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-brand">
+                <span class="logo">🚀</span>
+                <h1>OmniSet</h1>
+                <span class="version">v2.0</span>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-ghost" id="theme-toggle" title="Toggle theme">🌙</button>
+                <a href="https://github.com/user/omniset" class="btn btn-ghost" target="_blank">GitHub</a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Quick Start Presets -->
+            <section class="presets-section">
+                <h2>Quick Start</h2>
+                <div class="presets-grid" id="presets-container">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- Module Selector -->
+            <section class="selector-section">
+                <div class="selector-header">
+                    <h2>Select Modules</h2>
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Search modules...">
+                    </div>
+                </div>
+
+                <div class="categories-container" id="categories-container">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Sticky Footer with Summary -->
+        <footer class="footer" id="summary-footer">
+            <div class="summary">
+                <div class="summary-stats">
+                    <span class="stat">
+                        <strong id="selected-count">0</strong> modules
+                    </span>
+                    <span class="stat">
+                        <strong id="total-size">0</strong> MB
+                    </span>
+                </div>
+                <div class="summary-actions">
+                    <button class="btn btn-secondary" id="clear-btn" disabled>Clear All</button>
+                    <button class="btn btn-primary" id="generate-btn" disabled>Generate Command</button>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Modal for Generated Command -->
+        <div class="modal" id="command-modal">
+            <div class="modal-backdrop" onclick="closeModal()"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Installation Command</h3>
+                    <button class="btn btn-ghost" onclick="closeModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <div class="output-tabs">
+                        <button class="tab active" data-tab="command">Command</button>
+                        <button class="tab" data-tab="config">Config File</button>
+                        <button class="tab" data-tab="share">Share</button>
+                    </div>
+
+                    <div class="tab-content active" id="tab-command">
+                        <p class="output-label">Copy and run this command in your terminal:</p>
+                        <div class="code-block">
+                            <code id="output-command"></code>
+                            <button class="copy-btn" onclick="copyCommand()">📋 Copy</button>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-config">
+                        <p class="output-label">Download this config file and run with:</p>
+                        <div class="code-block small">
+                            <code>curl -sL omniset.io/i | bash -s -- --config config.yaml</code>
+                        </div>
+                        <pre class="config-preview" id="output-config"></pre>
+                        <button class="btn btn-secondary" onclick="downloadConfig()">📥 Download config.yaml</button>
+                    </div>
+
+                    <div class="tab-content" id="tab-share">
+                        <p class="output-label">Share this link:</p>
+                        <div class="code-block">
+                            <code id="output-share-url"></code>
+                            <button class="copy-btn" onclick="copyShareUrl()">📋 Copy</button>
+                        </div>
+                        <div class="qr-container">
+                            <div id="qr-code"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

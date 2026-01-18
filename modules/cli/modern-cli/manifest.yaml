@@ -1,0 +1,144 @@
+name: modern-cli
+display_name: Modern CLI Tools
+version: 1.0.0
+category: cli
+description: Modern replacements for classic Unix tools - faster and more user-friendly
+
+icon: terminal
+tags:
+  - cli
+  - modern
+  - rust
+  - productivity
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 100
+  ram_mb: 256
+  dependencies:
+    - curl
+    - unzip
+
+tools:
+  fzf:
+    name: fzf
+    description: Fuzzy finder for files, history, and more
+    install_method: git
+    repo: https://github.com/junegunn/fzf.git
+    install_cmd: ./install --all
+
+  ripgrep:
+    name: ripgrep
+    description: Extremely fast text search (rg)
+    install_method: apt
+    package: ripgrep
+    fallback:
+      type: cargo
+      crate: ripgrep
+
+  eza:
+    name: eza
+    description: Modern replacement for ls with colors and icons
+    install_method: cargo
+    crate: eza
+    fallback:
+      type: apt
+      package: exa
+
+  fd:
+    name: fd-find
+    description: Fast and user-friendly alternative to find
+    install_method: apt
+    package: fd-find
+    fallback:
+      type: cargo
+      crate: fd-find
+
+  bat:
+    name: bat
+    description: Cat clone with syntax highlighting
+    install_method: apt
+    package: bat
+    fallback:
+      type: cargo
+      crate: bat
+
+  zoxide:
+    name: zoxide
+    description: Smarter cd command that learns your habits
+    install_method: script
+    url: https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh
+
+  delta:
+    name: delta
+    description: Better git diff viewer
+    install_method: cargo
+    crate: git-delta
+
+  dust:
+    name: dust
+    description: More intuitive version of du
+    install_method: cargo
+    crate: du-dust
+
+  btop:
+    name: btop
+    description: Modern resource monitor
+    install_method: apt
+    package: btop
+    fallback:
+      type: snap
+      name: btop
+
+  fastfetch:
+    name: fastfetch
+    description: Fast system information tool
+    install_method: apt
+    package: fastfetch
+    fallback:
+      type: ppa
+      ppa: zhangsongcui3371/fastfetch
+      package: fastfetch
+
+provides:
+  commands:
+    - fzf
+    - rg
+    - eza
+    - fd
+    - bat
+    - zoxide
+    - btop
+
+shell_config:
+  bash: |
+    # fzf key bindings
+    [ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+    # zoxide
+    eval "$(zoxide init bash)"
+
+    # Aliases for modern tools
+    alias ls='eza --icons'
+    alias ll='eza -la --icons'
+    alias cat='bat --style=plain'
+    alias find='fd'
+    alias grep='rg'
+
+  zsh: |
+    # fzf key bindings
+    [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+    # zoxide
+    eval "$(zoxide init zsh)"
+
+    # Aliases for modern tools
+    alias ls='eza --icons'
+    alias ll='eza -la --icons'
+    alias cat='bat --style=plain'
+    alias find='fd'
+    alias grep='rg'

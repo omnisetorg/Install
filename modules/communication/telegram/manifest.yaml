@@ -1,0 +1,31 @@
+name: telegram
+display_name: Telegram
+version: latest
+category: communication
+description: Cloud-based messaging app
+
+icon: message
+tags:
+  - chat
+  - messaging
+  - privacy
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 50
+  ram_mb: 256
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - telegram-desktop
+
+provides:
+  commands:
+    - telegram-desktop
+  desktop_entry: true

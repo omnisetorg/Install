@@ -1,0 +1,32 @@
+name: virtualbox
+display_name: VirtualBox
+version: latest
+category: system
+description: Virtual machine manager by Oracle
+
+icon: settings
+tags:
+  - virtualization
+  - vm
+
+architecture:
+  amd64: true
+  arm64: false
+  armhf: false
+
+requirements:
+  disk_mb: 200
+  ram_mb: 1024
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - virtualbox
+      - virtualbox-ext-pack
+
+provides:
+  commands:
+    - virtualbox
+    - VBoxManage
+  desktop_entry: true

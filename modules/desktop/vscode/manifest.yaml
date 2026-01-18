@@ -1,0 +1,79 @@
+name: vscode
+display_name: Visual Studio Code
+version: latest
+category: development
+description: Popular code editor by Microsoft with rich extension ecosystem
+
+icon: code
+tags:
+  - editor
+  - ide
+  - microsoft
+  - popular
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 200
+  ram_mb: 512
+  dependencies:
+    - wget
+    - gpg
+    - apt-transport-https
+
+install_methods:
+  - type: apt_repo
+    priority: 1
+    key_url: https://packages.microsoft.com/keys/microsoft.asc
+    key_name: microsoft
+    repo: "deb [arch=amd64,arm64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/code stable main"
+    packages:
+      - code
+
+  - type: deb
+    priority: 2
+    url: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
+
+  - type: snap
+    priority: 3
+    name: code
+    flags: --classic
+
+  - type: flatpak
+    priority: 4
+    id: com.visualstudio.code
+
+provides:
+  commands:
+    - code
+  packages:
+    - code
+  desktop_entry: true
+
+options:
+  - id: extensions
+    type: multiselect
+    label: Extensions to install
+    description: Pre-install popular VS Code extensions
+    choices:
+      - id: python
+        name: Python
+        package: ms-python.python
+      - id: prettier
+        name: Prettier
+        package: esbenp.prettier-vscode
+      - id: eslint
+        name: ESLint
+        package: dbaeumer.vscode-eslint
+      - id: gitlens
+        name: GitLens
+        package: eamodio.gitlens
+      - id: docker
+        name: Docker
+        package: ms-azuretools.vscode-docker
+      - id: remote-ssh
+        name: Remote SSH
+        package: ms-vscode-remote.remote-ssh

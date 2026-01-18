@@ -1,0 +1,80 @@
+name: docker
+display_name: Docker
+version: latest
+category: development
+description: Container platform for building, shipping, and running applications
+
+icon: docker
+tags:
+  - containers
+  - devops
+  - virtualization
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 500
+  ram_mb: 1024
+  dependencies:
+    - ca-certificates
+    - curl
+    - gnupg
+    - lsb-release
+
+install_methods:
+  - type: script
+    priority: 1
+    description: Official Docker install script
+    url: https://get.docker.com
+
+  - type: apt_repo
+    priority: 2
+    key_url: https://download.docker.com/linux/ubuntu/gpg
+    key_name: docker
+    repo: "deb [arch=${ARCH} signed-by=/usr/share/keyrings/docker.gpg] https://download.docker.com/linux/${DISTRO_ID} ${VERSION_CODENAME:-stable} stable"
+    packages:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+
+provides:
+  commands:
+    - docker
+    - docker-compose
+  packages:
+    - docker-ce
+  services:
+    - docker
+
+options:
+  - id: compose
+    type: boolean
+    label: Docker Compose
+    description: Install Docker Compose plugin
+    default: true
+
+  - id: desktop
+    type: boolean
+    label: Docker Desktop
+    description: Install Docker Desktop GUI (larger download)
+    default: false
+    arch:
+      - amd64
+      - arm64
+
+  - id: non_root
+    type: boolean
+    label: Non-root access
+    description: Add current user to docker group
+    default: true
+
+post_install:
+  - command: sudo usermod -aG docker $USER
+    condition: options.non_root == true
+  - command: sudo systemctl enable docker
+  - command: sudo systemctl start docker

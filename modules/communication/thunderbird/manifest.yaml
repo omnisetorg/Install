@@ -1,0 +1,31 @@
+name: thunderbird
+display_name: Thunderbird
+version: latest
+category: communication
+description: Email client by Mozilla
+
+icon: message
+tags:
+  - email
+  - mozilla
+  - client
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 100
+  ram_mb: 256
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - thunderbird
+
+provides:
+  commands:
+    - thunderbird
+  desktop_entry: true

@@ -1,0 +1,40 @@
+name: redis
+display_name: Redis
+version: latest
+category: databases
+description: In-memory data structure store for caching (via Docker)
+
+icon: database
+tags:
+  - database
+  - cache
+  - nosql
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 50
+  ram_mb: 256
+  dependencies:
+    - docker
+
+install_methods:
+  - type: docker
+    priority: 1
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  - type: apt
+    priority: 2
+    packages:
+      - redis-server
+
+provides:
+  commands:
+    - redis-cli
+  services:
+    - redis

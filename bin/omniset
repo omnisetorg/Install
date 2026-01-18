@@ -1,0 +1,432 @@
+#!/bin/bash
+# OmniSet v2 - Main Entry Point
+# bin/omniset
+
+set -euo pipefail
+
+# Determine script location
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export OMNISET_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Source core libraries
+source "${OMNISET_ROOT}/lib/core/constants.sh"
+source "${OMNISET_ROOT}/lib/ui/colors.sh"
+source "${OMNISET_ROOT}/lib/ui/print.sh"
+source "${OMNISET_ROOT}/lib/system/detect.sh"
+source "${OMNISET_ROOT}/lib/system/packages.sh"
+source "${OMNISET_ROOT}/lib/install/modules.sh"
+
+# Initialize
+init_ui
+detect_system
+detect_package_manager
+
+# ═══════════════════════════════════════════════════════════════
+# Command Handlers
+# ═══════════════════════════════════════════════════════════════
+
+cmd_help() {
+    cat << 'EOF'
+OmniSet - Development Environment Setup
+
+USAGE:
+    omniset <COMMAND> [OPTIONS]
+
+COMMANDS:
+    install       Install modules
+    uninstall     Remove installed modules
+    list          List available modules
+    info          Show module information
+    search        Search for modules
+    doctor        Check system compatibility
+    update        Update OmniSet
+    web           Open web module selector
+
+INSTALL OPTIONS:
+    omniset install <module1> [module2] ...   Install specific modules
+    omniset install --from-url <url>          Install from URL-encoded selection
+    omniset install --from-config <file>      Install from YAML config file
+    omniset install --interactive             Interactive TUI selector
+
+EXAMPLES:
+    omniset install vscode docker chrome
+    omniset install --interactive
+    omniset list --category development
+    omniset info docker
+    omniset doctor
+
+For more help: omniset <command> --help
+EOF
+}
+
+cmd_install() {
+    local modules=()
+    local interactive=false
+    local from_url=""
+    local from_config=""
+    local force=false
+    local dry_run=false
+
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --interactive|-i)
+                interactive=true
+                shift
+                ;;
+            --from-url)
+                from_url="$2"
+                shift 2
+                ;;
+            --from-config)
+                from_config="$2"
+                shift 2
+                ;;
+            --force|-f)
+                force=true
+                shift
+                ;;
+            --dry-run)
+                dry_run=true
+                shift
+                ;;
+            --help|-h)
+                echo "Usage: omniset install [OPTIONS] [MODULES...]"
+                echo ""
+                echo "Options:"
+                echo "  --interactive, -i    Use interactive TUI selector"
+                echo "  --from-url URL       Install from URL-encoded selection"
+                echo "  --from-config FILE   Install from YAML config file"
+                echo "  --force, -f          Force reinstall"
+                echo "  --dry-run            Show what would be installed"
+                return 0
+                ;;
+            -*)
+                print_error "Unknown option: $1"
+                return 1
+                ;;
+            *)
+                modules+=("$1")
+                shift
+                ;;
+        esac
+    done
+
+    print_banner
+
+    # Determine modules to install
+    if [[ -n "$from_url" ]]; then
+        # Decode URL-encoded modules
+        IFS=',' read -ra modules <<< "$from_url"
+    elif [[ -n "$from_config" ]]; then
+        # Read from YAML config
+        if [[ ! -f "$from_config" ]]; then
+            print_error "Config file not found: $from_config"
+            return 1
+        fi
+        mapfile -t modules < <(yq -r '.modules[]' "$from_config" 2>/dev/null)
+    elif [[ "$interactive" == true ]]; then
+        # Interactive TUI selector
+        cmd_interactive_select
+        return $?
+    elif [[ ${#modules[@]} -eq 0 ]]; then
+        # No modules specified - show help
+        print_info "No modules specified. Options:"
+        print_bullet "omniset install <module1> <module2> ..."
+        print_bullet "omniset install --interactive"
+        print_bullet "omniset web  (open web selector)"
+        return 1
+    fi
+
+    # Show what will be installed
+    print_header "Installation Plan"
+    print_info "Modules to install:"
+    for mod in "${modules[@]}"; do
+        print_bullet "$mod"
+    done
+
+    if [[ "$dry_run" == true ]]; then
+        print_warning "DRY RUN - no changes will be made"
+        return 0
+    fi
+
+    # Confirm
+    print_confirm "Continue with installation?"
+    read -r confirm
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        print_info "Installation cancelled"
+        return 0
+    fi
+
+    # Install modules
+    discover_modules
+    install_modules "${modules[@]}"
+}
+
+cmd_list() {
+    local category=""
+    local format="table"
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --category|-c)
+                category="$2"
+                shift 2
+                ;;
+            --json)
+                format="json"
+                shift
+                ;;
+            --simple)
+                format="simple"
+                shift
+                ;;
+            *)
+                shift
+                ;;
+        esac
+    done
+
+    discover_modules
+    list_modules "$format" "$category"
+}
+
+cmd_info() {
+    local module_id="$1"
+
+    if [[ -z "$module_id" ]]; then
+        print_error "Usage: omniset info <module>"
+        return 1
+    fi
+
+    discover_modules
+
+    local module_dir
+    module_dir=$(get_module_dir "$module_id") || {
+        print_error "Module not found: $module_id"
+        return 1
+    }
+
+    local manifest="${module_dir}/manifest.yaml"
+
+    print_header "Module: $module_id"
+
+    print_kv "Name" "$(get_module_info "$module_id" "display_name")"
+    print_kv "Category" "$(get_module_info "$module_id" "category")"
+    print_kv "Description" "$(get_module_info "$module_id" "description")"
+    print_kv "Size" "$(get_module_info "$module_id" "requirements.disk_mb")MB"
+
+    echo ""
+    print_info "Architecture support:"
+    for arch in amd64 arm64 armhf; do
+        local supported=$(get_module_info "$module_id" "architecture.$arch" "false")
+        if [[ "$supported" == "true" ]]; then
+            print_bullet "$arch ${GREEN}${SYM_CHECK}${NC}"
+        else
+            print_bullet "$arch ${RED}${SYM_CROSS}${NC}"
+        fi
+    done
+
+    # Check if installed
+    echo ""
+    if is_module_installed "$module_id"; then
+        print_success "Status: Installed"
+    else
+        print_info "Status: Not installed"
+    fi
+}
+
+cmd_doctor() {
+    print_banner
+
+    print_header "System Compatibility Check"
+
+    # Check distro
+    print_step "Checking distribution..."
+    case "$DISTRO_TYPE" in
+        debian|rhel|arch|suse)
+            print_success "Supported: $DISTRO_NAME ($DISTRO_TYPE)"
+            ;;
+        *)
+            print_warning "Unknown distribution: $DISTRO_NAME"
+            ;;
+    esac
+
+    # Check architecture
+    print_step "Checking architecture..."
+    case "$ARCH" in
+        amd64|arm64|armhf)
+            print_success "Supported: $ARCH"
+            ;;
+        *)
+            print_warning "Limited support: $ARCH"
+            ;;
+    esac
+
+    # Check package manager
+    print_step "Checking package manager..."
+    if [[ -n "$PKG_MANAGER" ]]; then
+        print_success "Found: $PKG_MANAGER"
+    else
+        print_error "No supported package manager found"
+    fi
+
+    # Check internet
+    print_step "Checking internet connectivity..."
+    if [[ "$HAS_INTERNET" == true ]]; then
+        print_success "Connected"
+    else
+        print_error "No internet connection"
+    fi
+
+    # Check disk space
+    print_step "Checking disk space..."
+    if [[ "$DISK_AVAILABLE_MB" -gt 1024 ]]; then
+        print_success "${DISK_AVAILABLE_MB}MB available"
+    else
+        print_warning "Low disk space: ${DISK_AVAILABLE_MB}MB"
+    fi
+
+    # Check virtualization
+    print_step "Checking environment..."
+    if [[ "$IS_CONTAINER" == true ]]; then
+        print_warning "Running in container ($VIRT_TYPE) - some features limited"
+    elif [[ "$IS_WSL" == true ]]; then
+        print_warning "Running in WSL - some features limited"
+    elif [[ "$IS_VM" == true ]]; then
+        print_info "Running in VM ($VIRT_TYPE)"
+    else
+        print_success "Bare metal"
+    fi
+
+    # Check required tools
+    print_step "Checking required tools..."
+    local missing=()
+    for tool in curl wget git sudo; do
+        if ! command -v "$tool" &>/dev/null; then
+            missing+=("$tool")
+        fi
+    done
+
+    if [[ ${#missing[@]} -gt 0 ]]; then
+        print_warning "Missing: ${missing[*]}"
+    else
+        print_success "All required tools available"
+    fi
+
+    # Summary
+    echo ""
+    print_header "Summary"
+    print_system_summary
+}
+
+cmd_web() {
+    local url="https://omniset.io/builder"
+
+    print_info "Opening web module selector..."
+    print_info "URL: $url"
+
+    # Try to open browser
+    if command -v xdg-open &>/dev/null; then
+        xdg-open "$url" 2>/dev/null &
+    elif command -v open &>/dev/null; then
+        open "$url" 2>/dev/null &
+    else
+        print_warning "Could not open browser automatically"
+        print_info "Please visit: $url"
+    fi
+}
+
+cmd_interactive_select() {
+    # Check for dialog/whiptail
+    local dialog_cmd=""
+    if command -v whiptail &>/dev/null; then
+        dialog_cmd="whiptail"
+    elif command -v dialog &>/dev/null; then
+        dialog_cmd="dialog"
+    else
+        print_error "Interactive mode requires 'whiptail' or 'dialog'"
+        print_info "Install with: sudo apt install whiptail"
+        return 1
+    fi
+
+    discover_modules
+
+    # Build checklist items
+    local items=()
+    for module_id in "${!MODULE_REGISTRY[@]}"; do
+        local desc
+        desc=$(get_module_info "$module_id" "description" "No description")
+        items+=("$module_id" "${desc:0:50}" "OFF")
+    done
+
+    # Show dialog
+    local selected
+    selected=$($dialog_cmd --title "OmniSet Module Selector" \
+        --checklist "Select modules to install:" 20 70 12 \
+        "${items[@]}" 3>&1 1>&2 2>&3) || return 0
+
+    if [[ -z "$selected" ]]; then
+        print_info "No modules selected"
+        return 0
+    fi
+
+    # Convert to array and install
+    local modules=($selected)
+    install_modules "${modules[@]}"
+}
+
+# ═══════════════════════════════════════════════════════════════
+# Main Entry Point
+# ═══════════════════════════════════════════════════════════════
+
+main() {
+    local command="${1:-help}"
+    shift || true
+
+    case "$command" in
+        install|i)
+            cmd_install "$@"
+            ;;
+        uninstall|remove|rm)
+            cmd_uninstall "$@"
+            ;;
+        list|ls)
+            cmd_list "$@"
+            ;;
+        info|show)
+            cmd_info "$@"
+            ;;
+        search)
+            cmd_search "$@"
+            ;;
+        doctor|check)
+            cmd_doctor "$@"
+            ;;
+        web|builder)
+            cmd_web "$@"
+            ;;
+        update)
+            cmd_update "$@"
+            ;;
+        version|-v|--version)
+            echo "OmniSet v${OMNISET_VERSION}"
+            ;;
+        help|-h|--help)
+            cmd_help
+            ;;
+        *)
+            # Check if it's a module name (shorthand for install)
+            if [[ -n "${MODULE_REGISTRY[$command]:-}" ]]; then
+                cmd_install "$command" "$@"
+            else
+                print_error "Unknown command: $command"
+                echo ""
+                cmd_help
+                exit 1
+            fi
+            ;;
+    esac
+}
+
+main "$@"

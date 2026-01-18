@@ -1,0 +1,30 @@
+name: go
+display_name: Go
+version: latest
+category: development
+description: Go programming language
+
+icon: code
+tags:
+  - golang
+  - runtime
+  - compiled
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 200
+  ram_mb: 256
+
+install_methods:
+  - type: script
+    priority: 1
+    description: Official Go installer
+
+provides:
+  commands:
+    - go
+    - gofmt

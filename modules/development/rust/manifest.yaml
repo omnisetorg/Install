@@ -1,0 +1,31 @@
+name: rust
+display_name: Rust
+version: stable
+category: development
+description: Rust programming language via rustup
+
+icon: code
+tags:
+  - rust
+  - systems
+  - compiled
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 300
+  ram_mb: 512
+
+install_methods:
+  - type: script
+    priority: 1
+    url: https://sh.rustup.rs
+
+provides:
+  commands:
+    - rustc
+    - cargo
+    - rustup

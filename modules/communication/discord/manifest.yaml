@@ -1,0 +1,39 @@
+name: discord
+display_name: Discord
+version: latest
+category: communication
+description: Voice, video, and text communication platform
+
+icon: message
+tags:
+  - chat
+  - voice
+  - gaming
+  - community
+
+architecture:
+  amd64: true
+  arm64: false
+  armhf: false
+
+requirements:
+  disk_mb: 100
+  ram_mb: 512
+
+install_methods:
+  - type: deb
+    priority: 1
+    url: https://discord.com/api/download?platform=linux&format=deb
+
+  - type: flatpak
+    priority: 2
+    id: com.discordapp.Discord
+
+  - type: snap
+    priority: 3
+    name: discord
+
+provides:
+  commands:
+    - discord
+  desktop_entry: true

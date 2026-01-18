@@ -1,0 +1,33 @@
+name: signal
+display_name: Signal
+version: latest
+category: communication
+description: Encrypted messaging app
+
+icon: message
+tags:
+  - chat
+  - privacy
+  - encrypted
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 100
+  ram_mb: 256
+
+install_methods:
+  - type: apt_repo
+    priority: 1
+    key_url: https://updates.signal.org/desktop/apt/keys.asc
+    repo: "deb [arch=${ARCH} signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main"
+    packages:
+      - signal-desktop
+
+provides:
+  commands:
+    - signal-desktop
+  desktop_entry: true

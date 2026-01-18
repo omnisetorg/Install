@@ -1,0 +1,38 @@
+name: blender
+display_name: Blender
+version: latest
+category: creative
+description: 3D creation suite - modeling, animation, rendering
+
+icon: palette
+tags:
+  - 3d
+  - modeling
+  - animation
+  - rendering
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 500
+  ram_mb: 2048
+
+install_methods:
+  - type: apt_repo
+    priority: 1
+    ppa: savoury1/blender
+    packages:
+      - blender
+
+  - type: apt
+    priority: 2
+    packages:
+      - blender
+
+provides:
+  commands:
+    - blender
+  desktop_entry: true

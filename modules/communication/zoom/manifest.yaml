@@ -1,0 +1,31 @@
+name: zoom
+display_name: Zoom
+version: latest
+category: communication
+description: Video conferencing platform
+
+icon: message
+tags:
+  - video
+  - meetings
+  - conferencing
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 200
+  ram_mb: 512
+
+install_methods:
+  - type: deb
+    priority: 1
+    url_amd64: https://zoom.us/client/latest/zoom_amd64.deb
+    url_arm64: https://zoom.us/client/latest/zoom_arm64.deb
+
+provides:
+  commands:
+    - zoom
+  desktop_entry: true

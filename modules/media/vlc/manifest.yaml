@@ -1,0 +1,43 @@
+name: vlc
+display_name: VLC Media Player
+version: latest
+category: media
+description: Universal media player that plays most multimedia files
+
+icon: play
+tags:
+  - media
+  - video
+  - audio
+  - player
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 50
+  ram_mb: 256
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - vlc
+
+  - type: flatpak
+    priority: 2
+    id: org.videolan.VLC
+
+  - type: snap
+    priority: 3
+    name: vlc
+
+provides:
+  commands:
+    - vlc
+    - cvlc
+  packages:
+    - vlc
+  desktop_entry: true

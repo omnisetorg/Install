@@ -1,0 +1,35 @@
+name: steam
+display_name: Steam
+version: latest
+category: gaming
+description: Gaming platform by Valve
+
+icon: gamepad
+tags:
+  - gaming
+  - valve
+  - platform
+
+architecture:
+  amd64: true
+  arm64: false
+  armhf: false
+
+requirements:
+  disk_mb: 1000
+  ram_mb: 1024
+
+install_methods:
+  - type: deb
+    priority: 1
+    url: https://cdn.akamai.steamstatic.com/client/installer/steam.deb
+
+  - type: apt
+    priority: 2
+    packages:
+      - steam-installer
+
+provides:
+  commands:
+    - steam
+  desktop_entry: true

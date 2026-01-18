@@ -1,0 +1,37 @@
+name: obs
+display_name: OBS Studio
+version: latest
+category: creative
+description: Streaming and recording software
+
+icon: play
+tags:
+  - streaming
+  - recording
+  - video
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 200
+  ram_mb: 1024
+
+install_methods:
+  - type: apt_repo
+    priority: 1
+    ppa: obsproject/obs-studio
+    packages:
+      - obs-studio
+
+  - type: apt
+    priority: 2
+    packages:
+      - obs-studio
+
+provides:
+  commands:
+    - obs
+  desktop_entry: true

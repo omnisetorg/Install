@@ -1,0 +1,42 @@
+name: firefox
+display_name: Mozilla Firefox
+version: latest
+category: browser
+description: Privacy-focused web browser by Mozilla
+
+icon: globe
+tags:
+  - browser
+  - mozilla
+  - privacy
+  - open-source
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 100
+  ram_mb: 512
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - firefox
+
+  - type: flatpak
+    priority: 2
+    id: org.mozilla.firefox
+
+  - type: snap
+    priority: 3
+    name: firefox
+
+provides:
+  commands:
+    - firefox
+  packages:
+    - firefox
+  desktop_entry: true

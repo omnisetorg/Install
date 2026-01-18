@@ -1,0 +1,53 @@
+name: chrome
+display_name: Google Chrome
+version: latest
+category: browser
+description: Fast, secure web browser by Google
+
+icon: chrome
+tags:
+  - browser
+  - google
+  - popular
+
+architecture:
+  amd64: true
+  arm64: false
+  armhf: false
+
+requirements:
+  disk_mb: 150
+  ram_mb: 512
+  dependencies:
+    - wget
+
+install_methods:
+  - type: deb
+    priority: 1
+    url: https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+
+  - type: apt_repo
+    priority: 2
+    key_url: https://dl.google.com/linux/linux_signing_key.pub
+    key_name: google-chrome
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main"
+    packages:
+      - google-chrome-stable
+
+  - type: flatpak
+    priority: 3
+    id: com.google.Chrome
+
+provides:
+  commands:
+    - google-chrome
+    - google-chrome-stable
+  packages:
+    - google-chrome-stable
+  desktop_entry: true
+
+alternatives:
+  arm64:
+    - chromium
+  armhf:
+    - chromium

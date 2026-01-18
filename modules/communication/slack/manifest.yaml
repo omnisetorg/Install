@@ -1,0 +1,31 @@
+name: slack
+display_name: Slack
+version: latest
+category: communication
+description: Team collaboration platform
+
+icon: message
+tags:
+  - chat
+  - work
+  - team
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 150
+  ram_mb: 512
+
+install_methods:
+  - type: deb
+    priority: 1
+    url_amd64: https://downloads.slack-edge.com/desktop-releases/linux/x64/4.36.140/slack-desktop-4.36.140-amd64.deb
+    url_arm64: https://downloads.slack-edge.com/desktop-releases/linux/arm64/4.36.140/slack-desktop-4.36.140-arm64.deb
+
+provides:
+  commands:
+    - slack
+  desktop_entry: true

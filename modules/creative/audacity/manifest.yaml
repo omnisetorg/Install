@@ -1,0 +1,31 @@
+name: audacity
+display_name: Audacity
+version: latest
+category: creative
+description: Audio editor and recorder
+
+icon: play
+tags:
+  - audio
+  - editing
+  - recording
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 80
+  ram_mb: 256
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - audacity
+
+provides:
+  commands:
+    - audacity
+  desktop_entry: true

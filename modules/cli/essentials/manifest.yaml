@@ -1,0 +1,52 @@
+name: essentials
+display_name: Essential CLI Tools
+version: 1.0.0
+category: cli
+description: Core command-line tools for development and system administration
+
+icon: terminal
+tags:
+  - cli
+  - essential
+  - base
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 50
+  ram_mb: 256
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - curl
+      - wget
+      - git
+      - vim
+      - htop
+      - unzip
+      - zip
+      - jq
+      - tree
+      - ncdu
+      - tmux
+      - build-essential
+      - software-properties-common
+
+provides:
+  commands:
+    - curl
+    - wget
+    - git
+    - vim
+    - htop
+    - jq
+    - tmux
+  packages:
+    - curl
+    - wget
+    - git

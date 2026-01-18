@@ -1,0 +1,40 @@
+name: php
+display_name: PHP
+version: "8.4"
+category: development
+description: PHP programming language with common extensions
+
+icon: code
+tags:
+  - php
+  - web
+  - scripting
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 150
+  ram_mb: 256
+
+install_methods:
+  - type: apt_repo
+    priority: 1
+    ppa: ondrej/php
+    packages:
+      - php8.4
+      - php8.4-cli
+      - php8.4-common
+      - php8.4-curl
+      - php8.4-mbstring
+      - php8.4-xml
+      - php8.4-zip
+      - php8.4-mysql
+      - php8.4-pgsql
+
+provides:
+  commands:
+    - php
+    - composer
