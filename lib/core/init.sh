@@ -49,6 +49,12 @@ omniset_init() {
     # Detect package manager
     detect_package_manager
 
+    # Check for required dependencies (including yq)
+    check_requirements || {
+        print_error "Missing required dependencies. Please install them and try again."
+        exit 1
+    }
+
     # Create necessary directories
     mkdir -p "${OMNISET_DATA_DIR}" "${OMNISET_CACHE_DIR}" "${OMNISET_CONFIG_DIR}"
 
@@ -107,7 +113,67 @@ check_requirements() {
         return 1
     fi
 
+    # Check for yq (required for YAML parsing)
+    check_yq || return 1
+
     return 0
+}
+
+# Check and install yq if missing
+check_yq() {
+    if command -v yq &>/dev/null; then
+        return 0
+    fi
+
+    print_warning "yq (YAML processor) is not installed"
+    print_info "yq is required for parsing module manifests"
+
+    # Try to install yq
+    print_step "Installing yq..."
+
+    local arch="${ARCH:-amd64}"
+    local yq_version="v4.40.5"
+    local yq_binary="yq_linux_${arch}"
+    local yq_url="https://github.com/mikefarah/yq/releases/download/${yq_version}/${yq_binary}"
+
+    # Try to download and install yq
+    if curl -fsSL "$yq_url" -o /tmp/yq && chmod +x /tmp/yq; then
+        if sudo mv /tmp/yq /usr/local/bin/yq; then
+            print_success "yq installed successfully"
+            return 0
+        fi
+    fi
+
+    # Fallback: try package managers
+    case "${DISTRO_TYPE:-}" in
+        debian)
+            if sudo apt-get update && sudo apt-get install -y yq 2>/dev/null; then
+                print_success "yq installed via apt"
+                return 0
+            fi
+            ;;
+        arch)
+            if sudo pacman -S --noconfirm yq 2>/dev/null; then
+                print_success "yq installed via pacman"
+                return 0
+            fi
+            ;;
+    esac
+
+    # If snap is available
+    if command -v snap &>/dev/null; then
+        if sudo snap install yq 2>/dev/null; then
+            print_success "yq installed via snap"
+            return 0
+        fi
+    fi
+
+    print_error "Could not install yq automatically"
+    print_info "Please install yq manually:"
+    print_bullet "Debian/Ubuntu: sudo apt install yq"
+    print_bullet "Or: sudo snap install yq"
+    print_bullet "Or: https://github.com/mikefarah/yq#install"
+    return 1
 }
 
 # ═══════════════════════════════════════════════════════════════

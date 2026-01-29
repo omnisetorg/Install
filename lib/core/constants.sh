@@ -15,8 +15,9 @@ readonly OMNISET_DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/omniset"
 readonly OMNISET_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/omniset"
 
 # Remote
-readonly OMNISET_REPO_URL="https://raw.githubusercontent.com/user/omniset/main"
-readonly OMNISET_WEB_URL="https://omniset.io"
+readonly OMNISET_REPO_URL="https://raw.githubusercontent.com/omnisetorg/omniset/main"
+readonly OMNISET_GIT_URL="https://github.com/omnisetorg/omniset.git"
+readonly OMNISET_WEB_URL="https://omniset.org"
 readonly OMNISET_API_URL="${OMNISET_WEB_URL}/api"
 
 # Logging

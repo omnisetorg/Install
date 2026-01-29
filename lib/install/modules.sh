@@ -183,7 +183,7 @@ is_module_installed() {
 # Install a single module
 install_module() {
     local module_id="$1"
-    local force="${2:-false}"
+    local force="${2:-${OMNISET_FORCE_INSTALL:-false}}"
     local options="${3:-}"
 
     local module_dir
@@ -342,9 +342,47 @@ auto_install_module() {
             script)
                 local script_url
                 script_url=$(yq -r ".install_methods[$i].url" "$manifest")
-                if curl -fsSL "$script_url" | bash; then
+
+                # Security: Download script first for inspection
+                local temp_script="${OMNISET_TEMP_DIR:-/tmp}/install_script_$$.sh"
+                mkdir -p "$(dirname "$temp_script")"
+
+                print_warning "This install method downloads and executes a script from:"
+                print_bullet "$script_url"
+
+                if ! curl -fsSL "$script_url" -o "$temp_script"; then
+                    print_error "Failed to download install script"
+                    rm -f "$temp_script"
+                    continue
+                fi
+
+                # Show script hash for verification
+                local script_hash=$(sha256sum "$temp_script" 2>/dev/null | cut -d' ' -f1 || md5sum "$temp_script" | cut -d' ' -f1)
+                print_info "Script SHA256: ${script_hash:0:16}..."
+
+                # Check for common trusted sources
+                local trusted=false
+                case "$script_url" in
+                    https://get.docker.com*|https://raw.githubusercontent.com/nvm-sh/*|https://sh.rustup.rs*)
+                        trusted=true
+                        ;;
+                esac
+
+                if [[ "$trusted" != "true" ]] && [[ "${OMNISET_TRUST_SCRIPTS:-false}" != "true" ]]; then
+                    print_confirm "Execute this script? (inspect: cat $temp_script)"
+                    read -r confirm
+                    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+                        print_info "Skipping script execution"
+                        rm -f "$temp_script"
+                        continue
+                    fi
+                fi
+
+                if bash "$temp_script"; then
+                    rm -f "$temp_script"
                     return 0
                 fi
+                rm -f "$temp_script"
                 ;;
         esac
     done

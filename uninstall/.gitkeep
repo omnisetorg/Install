@@ -1,0 +1,2 @@
+# This directory contains global uninstall scripts.
+# Module-specific uninstall scripts are in modules/<category>/<module>/uninstall.sh

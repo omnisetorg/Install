@@ -41,6 +41,7 @@ PORT=9999
 CALLBACK_FILE="$OMNISET_TMP/selection"
 WEB_DIR="$OMNISET_TMP/web"
 BASE_URL="${OMNISET_URL:-https://raw.githubusercontent.com/omnisetorg/omniset/main}"
+GIT_URL="https://github.com/omnisetorg/omniset.git"
 
 echo -e "${BLUE}▸${NC} Checking requirements..."
 check_requirements
@@ -196,7 +197,7 @@ if [[ -d "$INSTALL_DIR" ]]; then
     cd "$INSTALL_DIR"
     git pull -q 2>/dev/null || true
 else
-    git clone -q https://github.com/omnisetorg/omniset.git "$INSTALL_DIR"
+    git clone -q "$GIT_URL" "$INSTALL_DIR"
     cd "$INSTALL_DIR"
 fi
 

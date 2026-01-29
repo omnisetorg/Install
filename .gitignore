@@ -1,2 +1,35 @@
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+*.tmp
+*.temp
+/tmp/
+
+# Playwright/Testing
 .playwright-mcp/
+
+# Build artifacts
+dist/
+build/
+
+# Node modules (if web interface uses npm)
+node_modules/
+
+# Environment
+.env
+.env.local

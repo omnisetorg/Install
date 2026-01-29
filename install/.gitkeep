@@ -1,0 +1,2 @@
+# This directory contains install scripts for the OmniSet installer itself.
+# Module-specific install scripts are in modules/<category>/<module>/install.sh

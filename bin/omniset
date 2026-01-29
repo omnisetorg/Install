@@ -176,6 +176,9 @@ cmd_install() {
 
     # Install modules
     discover_modules
+
+    # Export force flag for install_module to use
+    export OMNISET_FORCE_INSTALL="$force"
     install_modules "${modules[@]}"
 }
 
@@ -337,7 +340,7 @@ cmd_doctor() {
 }
 
 cmd_web() {
-    local url="https://omniset.io/builder"
+    local url="${OMNISET_WEB_URL}/builder"
 
     print_info "Opening web module selector..."
     print_info "URL: $url"
@@ -350,6 +353,141 @@ cmd_web() {
     else
         print_warning "Could not open browser automatically"
         print_info "Please visit: $url"
+    fi
+}
+
+cmd_uninstall() {
+    local modules=()
+
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --help|-h)
+                echo "Usage: omniset uninstall [MODULES...]"
+                echo ""
+                echo "Remove installed modules."
+                return 0
+                ;;
+            -*)
+                print_error "Unknown option: $1"
+                return 1
+                ;;
+            *)
+                modules+=("$1")
+                shift
+                ;;
+        esac
+    done
+
+    if [[ ${#modules[@]} -eq 0 ]]; then
+        print_error "No modules specified for uninstall"
+        print_info "Usage: omniset uninstall <module1> [module2] ..."
+        return 1
+    fi
+
+    print_banner
+    discover_modules
+
+    print_header "Uninstallation Plan"
+    print_info "Modules to uninstall:"
+    for mod in "${modules[@]}"; do
+        print_bullet "$mod"
+    done
+
+    print_confirm "Continue with uninstallation?"
+    read -r confirm
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        print_info "Uninstallation cancelled"
+        return 0
+    fi
+
+    local failed=0
+    for module_id in "${modules[@]}"; do
+        uninstall_module "$module_id" || ((failed++))
+    done
+
+    print_header "Uninstallation Summary"
+    print_kv "Total" "${#modules[@]}"
+    print_kv "Failed" "$failed"
+
+    [[ $failed -eq 0 ]]
+}
+
+cmd_search() {
+    local query="${1:-}"
+
+    if [[ -z "$query" ]]; then
+        print_error "Usage: omniset search <query>"
+        return 1
+    fi
+
+    discover_modules
+
+    print_header "Search results for: $query"
+
+    local found=0
+    for module_id in "${!MODULE_REGISTRY[@]}"; do
+        local module_dir="${MODULE_REGISTRY[$module_id]}"
+        local manifest="${module_dir}/manifest.yaml"
+
+        local name=$(yq -r '.display_name // "'"$module_id"'"' "$manifest" 2>/dev/null || echo "$module_id")
+        local description=$(yq -r '.description // ""' "$manifest" 2>/dev/null || echo "")
+        local tags=$(yq -r '.tags[]? // empty' "$manifest" 2>/dev/null | tr '\n' ' ')
+
+        # Search in id, name, description, and tags
+        if [[ "$module_id" == *"$query"* ]] || \
+           [[ "${name,,}" == *"${query,,}"* ]] || \
+           [[ "${description,,}" == *"${query,,}"* ]] || \
+           [[ "${tags,,}" == *"${query,,}"* ]]; then
+            printf "  ${BOLD}%-20s${NC} %s\n" "$module_id" "$description"
+            ((found++))
+        fi
+    done
+
+    if [[ $found -eq 0 ]]; then
+        print_info "No modules found matching '$query'"
+    else
+        print_info "Found $found module(s)"
+    fi
+}
+
+cmd_update() {
+    print_banner
+    print_step "Checking for updates..."
+
+    local install_dir="${OMNISET_ROOT}"
+
+    if [[ -d "${install_dir}/.git" ]]; then
+        cd "$install_dir"
+
+        # Fetch latest
+        if git fetch origin main &>/dev/null; then
+            local local_hash=$(git rev-parse HEAD)
+            local remote_hash=$(git rev-parse origin/main)
+
+            if [[ "$local_hash" == "$remote_hash" ]]; then
+                print_success "OmniSet is already up to date (v${OMNISET_VERSION})"
+            else
+                print_info "Update available!"
+                print_confirm "Update OmniSet now?"
+                read -r confirm
+                if [[ "$confirm" =~ ^[Yy]$ ]]; then
+                    if git pull origin main; then
+                        print_success "OmniSet updated successfully"
+                        print_info "Please restart omniset to use the new version"
+                    else
+                        print_error "Update failed"
+                        return 1
+                    fi
+                fi
+            fi
+        else
+            print_warning "Could not check for updates (network error?)"
+        fi
+    else
+        print_warning "OmniSet is not installed via git"
+        print_info "To update, run:"
+        print_bullet "curl -sL https://omniset.org/install | bash"
     fi
 }
 
@@ -433,6 +571,8 @@ main() {
             ;;
         *)
             # Check if it's a module name (shorthand for install)
+            # Need to discover modules first to check
+            discover_modules
             if [[ -n "${MODULE_REGISTRY[$command]:-}" ]]; then
                 cmd_install "$command" "$@"
             else
