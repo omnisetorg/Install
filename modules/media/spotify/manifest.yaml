@@ -1,0 +1,43 @@
+name: spotify
+display_name: Spotify
+version: latest
+category: media
+description: Music streaming service
+
+icon: spotify
+tags:
+  - music
+  - streaming
+  - audio
+
+architecture:
+  amd64: true
+  arm64: false
+  armhf: false
+
+requirements:
+  disk_mb: 300
+  ram_mb: 512
+
+install_methods:
+  - type: apt_repo
+    priority: 1
+    key_url: https://download.spotify.com/debian/pubkey_6224F9941A8AA6D1.gpg
+    key_name: spotify
+    repo: "deb [signed-by=/usr/share/keyrings/spotify.gpg] http://repository.spotify.com stable non-free"
+    packages:
+      - spotify-client
+
+  - type: flatpak
+    priority: 2
+    id: com.spotify.Client
+
+  - type: snap
+    priority: 3
+    name: spotify
+
+provides:
+  commands:
+    - spotify
+  packages:
+    - spotify-client

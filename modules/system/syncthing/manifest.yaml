@@ -1,0 +1,55 @@
+name: syncthing
+display_name: Syncthing
+version: latest
+category: system
+description: Continuous file synchronization program
+
+icon: syncthing
+tags:
+  - sync
+  - backup
+  - files
+  - p2p
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 50
+  ram_mb: 128
+
+install_methods:
+  - type: apt_repo
+    priority: 1
+    key_url: https://syncthing.net/release-key.gpg
+    key_name: syncthing
+    repo: "deb [signed-by=/usr/share/keyrings/syncthing.gpg] https://apt.syncthing.net/ syncthing stable"
+    packages:
+      - syncthing
+
+  - type: apt
+    priority: 2
+    packages:
+      - syncthing
+
+  - type: flatpak
+    priority: 3
+    id: me.kozec.syncthingtk
+
+  - type: snap
+    priority: 4
+    name: syncthing
+
+provides:
+  commands:
+    - syncthing
+  packages:
+    - syncthing
+  services:
+    - syncthing
+
+post_install:
+  - command: systemctl --user enable syncthing
+  - command: systemctl --user start syncthing

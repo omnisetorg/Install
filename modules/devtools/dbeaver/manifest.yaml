@@ -1,0 +1,39 @@
+name: dbeaver
+display_name: DBeaver
+version: latest
+category: devtools
+description: Universal database tool for developers and DBAs
+
+icon: dbeaver
+tags:
+  - database
+  - sql
+  - gui
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 500
+  ram_mb: 1024
+
+install_methods:
+  - type: deb
+    priority: 1
+    url: https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb
+
+  - type: flatpak
+    priority: 2
+    id: io.dbeaver.DBeaverCommunity
+
+  - type: snap
+    priority: 3
+    name: dbeaver-ce
+
+provides:
+  commands:
+    - dbeaver
+  packages:
+    - dbeaver-ce

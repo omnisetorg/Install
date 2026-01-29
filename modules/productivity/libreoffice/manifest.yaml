@@ -1,0 +1,43 @@
+name: libreoffice
+display_name: LibreOffice
+version: latest
+category: productivity
+description: Free and open source office suite
+
+icon: libreoffice
+tags:
+  - office
+  - documents
+  - spreadsheets
+  - presentations
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 1500
+  ram_mb: 1024
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - libreoffice
+      - libreoffice-gtk3
+
+  - type: flatpak
+    priority: 2
+    id: org.libreoffice.LibreOffice
+
+  - type: snap
+    priority: 3
+    name: libreoffice
+
+provides:
+  commands:
+    - libreoffice
+    - soffice
+  packages:
+    - libreoffice

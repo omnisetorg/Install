@@ -1,0 +1,37 @@
+name: notion
+display_name: Notion
+version: latest
+category: productivity
+description: All-in-one workspace for notes, docs, and projects
+
+icon: notion
+tags:
+  - notes
+  - productivity
+  - collaboration
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 300
+  ram_mb: 512
+
+install_methods:
+  - type: deb
+    priority: 1
+    url: https://github.com/nickvision-apps/notion/releases/latest/download/notion_amd64.deb
+
+  - type: flatpak
+    priority: 2
+    id: io.github.nickvision_notion
+
+  - type: snap
+    priority: 3
+    name: notion-snap-reborn
+
+provides:
+  commands:
+    - notion

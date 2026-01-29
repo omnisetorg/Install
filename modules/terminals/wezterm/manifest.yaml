@@ -1,0 +1,45 @@
+name: wezterm
+display_name: WezTerm
+version: latest
+category: terminals
+description: GPU-accelerated terminal emulator and multiplexer
+
+icon: wezterm
+tags:
+  - terminal
+  - gpu
+  - multiplexer
+  - lua
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 150
+  ram_mb: 256
+
+install_methods:
+  - type: apt_repo
+    priority: 1
+    key_url: https://apt.fury.io/wez/gpg.key
+    key_name: wezterm
+    repo: "deb [signed-by=/usr/share/keyrings/wezterm.gpg] https://apt.fury.io/wez/ * *"
+    packages:
+      - wezterm
+
+  - type: flatpak
+    priority: 2
+    id: org.wezfurlong.wezterm
+
+  - type: appimage
+    priority: 3
+    url: https://github.com/wez/wezterm/releases/latest/download/WezTerm-linux-x86_64.AppImage
+    name: wezterm
+
+provides:
+  commands:
+    - wezterm
+  packages:
+    - wezterm

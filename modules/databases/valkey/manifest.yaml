@@ -1,0 +1,45 @@
+name: valkey
+display_name: Valkey
+version: "8"
+category: databases
+description: Open-source in-memory data store (Redis fork)
+
+icon: valkey
+tags:
+  - database
+  - cache
+  - redis
+  - key-value
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 100
+  ram_mb: 256
+  dependencies:
+    - docker
+
+install_methods:
+  - type: docker
+    priority: 1
+    image: valkey/valkey:8
+    container_name: valkey
+    ports:
+      - "6379:6379"
+    volumes:
+      - /var/lib/omniset/valkey:/data
+
+  - type: apt
+    priority: 2
+    packages:
+      - valkey-server
+      - valkey-tools
+
+provides:
+  commands:
+    - valkey-cli
+  services:
+    - valkey

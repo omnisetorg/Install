@@ -1,0 +1,40 @@
+name: qbittorrent
+display_name: qBittorrent
+version: latest
+category: system
+description: Free and open source BitTorrent client
+
+icon: qbittorrent
+tags:
+  - torrent
+  - download
+  - p2p
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 100
+  ram_mb: 256
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - qbittorrent
+
+  - type: flatpak
+    priority: 2
+    id: org.qbittorrent.qBittorrent
+
+  - type: snap
+    priority: 3
+    name: qbittorrent-arnatious
+
+provides:
+  commands:
+    - qbittorrent
+  packages:
+    - qbittorrent

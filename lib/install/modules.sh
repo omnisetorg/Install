@@ -384,6 +384,159 @@ auto_install_module() {
                 fi
                 rm -f "$temp_script"
                 ;;
+
+            docker)
+                # Docker-based installation (for databases, services, etc.)
+                local image container_name ports volumes env_vars
+                image=$(yq -r ".install_methods[$i].image" "$manifest")
+                container_name=$(yq -r ".install_methods[$i].container_name // \"$module_id\"" "$manifest")
+                ports=$(yq -r ".install_methods[$i].ports[]? // empty" "$manifest" 2>/dev/null)
+                volumes=$(yq -r ".install_methods[$i].volumes[]? // empty" "$manifest" 2>/dev/null)
+                env_vars=$(yq -r ".install_methods[$i].environment | to_entries | .[] | \"-e \" + .key + \"=\" + .value" "$manifest" 2>/dev/null)
+
+                # Check if Docker is available
+                if ! command -v docker &>/dev/null; then
+                    print_warning "Docker is not installed. Installing Docker first..."
+                    install_module "docker" || {
+                        print_error "Failed to install Docker"
+                        continue
+                    }
+                fi
+
+                # Check if Docker daemon is running
+                if ! docker info &>/dev/null; then
+                    print_error "Docker daemon is not running"
+                    print_info "Start Docker with: sudo systemctl start docker"
+                    continue
+                fi
+
+                print_step "Pulling Docker image: $image"
+                if ! docker pull "$image"; then
+                    print_error "Failed to pull Docker image: $image"
+                    continue
+                fi
+
+                # Build docker run command
+                local docker_cmd="docker run -d --name $container_name --restart unless-stopped"
+
+                # Add ports
+                for port in $ports; do
+                    docker_cmd+=" -p $port"
+                done
+
+                # Add volumes
+                for vol in $volumes; do
+                    # Create host directory if needed
+                    local host_path="${vol%%:*}"
+                    if [[ "$host_path" == /* ]]; then
+                        sudo mkdir -p "$host_path"
+                    fi
+                    docker_cmd+=" -v $vol"
+                done
+
+                # Add environment variables
+                if [[ -n "$env_vars" ]]; then
+                    docker_cmd+=" $env_vars"
+                fi
+
+                docker_cmd+=" $image"
+
+                # Remove existing container if exists
+                if docker ps -a --format '{{.Names}}' | grep -q "^${container_name}$"; then
+                    print_info "Removing existing container: $container_name"
+                    docker stop "$container_name" 2>/dev/null || true
+                    docker rm "$container_name" 2>/dev/null || true
+                fi
+
+                print_step "Starting container: $container_name"
+                if eval "$docker_cmd"; then
+                    print_success "Container $container_name started successfully"
+
+                    # Create convenience wrapper script
+                    local wrapper_script="/usr/local/bin/${module_id}-docker"
+                    cat << WRAPPER | sudo tee "$wrapper_script" > /dev/null
+#!/bin/bash
+# OmniSet Docker wrapper for $module_id
+docker exec -it $container_name "\$@"
+WRAPPER
+                    sudo chmod +x "$wrapper_script"
+
+                    return 0
+                else
+                    print_error "Failed to start container"
+                    continue
+                fi
+                ;;
+
+            appimage)
+                # AppImage installation
+                local url app_name
+                url=$(yq -r ".install_methods[$i].url" "$manifest")
+                app_name=$(yq -r ".install_methods[$i].name // \"$module_id\"" "$manifest")
+
+                local appimage_dir="$HOME/.local/bin"
+                local appimage_path="$appimage_dir/$app_name.AppImage"
+
+                mkdir -p "$appimage_dir"
+
+                print_step "Downloading AppImage: $app_name"
+                if curl -fsSL -o "$appimage_path" "$url"; then
+                    chmod +x "$appimage_path"
+
+                    # Create symlink
+                    ln -sf "$appimage_path" "$appimage_dir/$app_name"
+
+                    # Add to PATH if not already
+                    if [[ ":$PATH:" != *":$appimage_dir:"* ]]; then
+                        echo "export PATH=\"\$PATH:$appimage_dir\"" >> "$HOME/.bashrc"
+                        print_info "Added $appimage_dir to PATH in .bashrc"
+                    fi
+
+                    print_success "AppImage installed: $appimage_path"
+                    return 0
+                fi
+                ;;
+
+            binary)
+                # Direct binary download
+                local url bin_name install_path
+                url=$(yq -r ".install_methods[$i].url" "$manifest")
+                bin_name=$(yq -r ".install_methods[$i].name // \"$module_id\"" "$manifest")
+                install_path=$(yq -r ".install_methods[$i].install_path // \"/usr/local/bin\"" "$manifest")
+
+                local temp_file="/tmp/${bin_name}"
+
+                print_step "Downloading binary: $bin_name"
+                if curl -fsSL -o "$temp_file" "$url"; then
+                    chmod +x "$temp_file"
+
+                    # Handle archives
+                    case "$url" in
+                        *.tar.gz|*.tgz)
+                            tar -xzf "$temp_file" -C /tmp
+                            local extracted=$(find /tmp -maxdepth 2 -name "$bin_name" -type f 2>/dev/null | head -1)
+                            if [[ -n "$extracted" ]]; then
+                                sudo mv "$extracted" "$install_path/$bin_name"
+                            fi
+                            ;;
+                        *.zip)
+                            unzip -o "$temp_file" -d /tmp
+                            local extracted=$(find /tmp -maxdepth 2 -name "$bin_name" -type f 2>/dev/null | head -1)
+                            if [[ -n "$extracted" ]]; then
+                                sudo mv "$extracted" "$install_path/$bin_name"
+                            fi
+                            ;;
+                        *)
+                            sudo mv "$temp_file" "$install_path/$bin_name"
+                            ;;
+                    esac
+
+                    sudo chmod +x "$install_path/$bin_name"
+                    print_success "Binary installed: $install_path/$bin_name"
+                    return 0
+                fi
+                rm -f "$temp_file"
+                ;;
         esac
     done
 

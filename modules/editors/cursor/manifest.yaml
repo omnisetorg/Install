@@ -1,0 +1,35 @@
+name: cursor
+display_name: Cursor
+version: latest
+category: editors
+description: AI-powered code editor built on VS Code
+
+icon: cursor
+tags:
+  - editor
+  - ai
+  - ide
+  - vscode
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 500
+  ram_mb: 1024
+
+install_methods:
+  - type: deb
+    priority: 1
+    url: https://download.todesktop.com/230313mzl4w4u92/cursor_latest_amd64.deb
+
+  - type: appimage
+    priority: 2
+    url: https://downloader.cursor.sh/linux/appImage/x64
+    name: cursor
+
+provides:
+  commands:
+    - cursor

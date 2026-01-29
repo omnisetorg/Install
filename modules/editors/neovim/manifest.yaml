@@ -1,0 +1,60 @@
+name: neovim
+display_name: Neovim
+version: latest
+category: editors
+description: Hyperextensible Vim-based text editor
+
+icon: neovim
+tags:
+  - editor
+  - vim
+  - terminal
+  - lua
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 100
+  ram_mb: 256
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - neovim
+
+  - type: appimage
+    priority: 2
+    url: https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+    name: nvim
+
+  - type: snap
+    priority: 3
+    name: nvim
+    flags: --classic
+
+  - type: flatpak
+    priority: 4
+    id: io.neovim.nvim
+
+provides:
+  commands:
+    - nvim
+  packages:
+    - neovim
+
+options:
+  - id: kickstart
+    type: boolean
+    label: Kickstart Config
+    description: Install kickstart.nvim configuration
+    default: false
+
+  - id: lazyvim
+    type: boolean
+    label: LazyVim
+    description: Install LazyVim distribution
+    default: false

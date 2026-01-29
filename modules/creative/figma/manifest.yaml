@@ -1,0 +1,38 @@
+name: figma
+display_name: Figma
+version: latest
+category: creative
+description: Collaborative design tool for UI/UX design
+
+icon: figma
+tags:
+  - design
+  - ui
+  - collaboration
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 400
+  ram_mb: 1024
+
+install_methods:
+  - type: flatpak
+    priority: 1
+    id: io.github.nickvision_figma
+
+  - type: snap
+    priority: 2
+    name: figma-linux
+
+  - type: appimage
+    priority: 3
+    url: https://github.com/nickvision-figma/figma/releases/latest/download/Figma-linux-x86_64.AppImage
+    name: figma
+
+provides:
+  commands:
+    - figma-linux

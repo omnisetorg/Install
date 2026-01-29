@@ -1,0 +1,39 @@
+name: zed
+display_name: Zed
+version: latest
+category: editors
+description: High-performance, multiplayer code editor
+
+icon: zed
+tags:
+  - editor
+  - rust
+  - collaboration
+  - ide
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 300
+  ram_mb: 512
+
+install_methods:
+  - type: script
+    priority: 1
+    url: https://zed.dev/install.sh
+
+  - type: flatpak
+    priority: 2
+    id: dev.zed.Zed
+
+  - type: binary
+    priority: 3
+    url: https://zed.dev/api/releases/stable/latest/zed-linux-x86_64.tar.gz
+    name: zed
+
+provides:
+  commands:
+    - zed

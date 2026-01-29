@@ -1,0 +1,59 @@
+name: java
+display_name: Java JDK
+version: "21"
+category: development
+description: OpenJDK Java Development Kit
+
+icon: java
+tags:
+  - jdk
+  - openjdk
+  - jvm
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 400
+  ram_mb: 512
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - openjdk-21-jdk
+      - openjdk-21-jre
+
+  - type: apt
+    priority: 2
+    packages:
+      - openjdk-17-jdk
+      - openjdk-17-jre
+
+provides:
+  commands:
+    - java
+    - javac
+  packages:
+    - openjdk-21-jdk
+
+options:
+  - id: maven
+    type: boolean
+    label: Maven
+    description: Install Apache Maven build tool
+    default: false
+
+  - id: gradle
+    type: boolean
+    label: Gradle
+    description: Install Gradle build tool
+    default: false
+
+post_install:
+  - command: sudo apt-get install -y maven
+    condition: options.maven == true
+  - command: sudo apt-get install -y gradle
+    condition: options.gradle == true

@@ -1,0 +1,43 @@
+name: lazygit
+display_name: Lazygit
+version: latest
+category: cli
+description: Simple terminal UI for git commands
+
+icon: lazygit
+tags:
+  - git
+  - terminal
+  - tui
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 50
+  ram_mb: 128
+
+install_methods:
+  - type: binary
+    priority: 1
+    url: https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_Linux_x86_64.tar.gz
+    name: lazygit
+
+  - type: apt
+    priority: 2
+    packages:
+      - lazygit
+
+  - type: snap
+    priority: 3
+    name: lazygit
+
+  - type: cargo
+    priority: 4
+    crate: lazygit
+
+provides:
+  commands:
+    - lazygit

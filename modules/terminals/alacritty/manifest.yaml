@@ -1,0 +1,45 @@
+name: alacritty
+display_name: Alacritty
+version: latest
+category: terminals
+description: Fast, cross-platform, GPU-accelerated terminal emulator
+
+icon: alacritty
+tags:
+  - terminal
+  - gpu
+  - rust
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 50
+  ram_mb: 128
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - alacritty
+
+  - type: snap
+    priority: 2
+    name: alacritty
+    flags: --classic
+
+  - type: flatpak
+    priority: 3
+    id: io.alacritty.Alacritty
+
+  - type: cargo
+    priority: 4
+    crate: alacritty
+
+provides:
+  commands:
+    - alacritty
+  packages:
+    - alacritty

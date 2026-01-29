@@ -1,0 +1,42 @@
+name: ghostty
+display_name: Ghostty
+version: latest
+category: terminals
+description: Fast, feature-rich, GPU-accelerated terminal
+
+icon: ghostty
+tags:
+  - terminal
+  - gpu
+  - zig
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 100
+  ram_mb: 256
+
+install_methods:
+  - type: apt_repo
+    priority: 1
+    key_url: https://ghostty.org/gpg.key
+    key_name: ghostty
+    repo: "deb [signed-by=/usr/share/keyrings/ghostty.gpg] https://apt.ghostty.org stable main"
+    packages:
+      - ghostty
+
+  - type: flatpak
+    priority: 2
+    id: com.mitchellh.ghostty
+
+  - type: binary
+    priority: 3
+    url: https://github.com/ghostty-org/ghostty/releases/latest/download/ghostty-linux-x86_64.tar.gz
+    name: ghostty
+
+provides:
+  commands:
+    - ghostty

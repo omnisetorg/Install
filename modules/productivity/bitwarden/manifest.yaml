@@ -1,0 +1,49 @@
+name: bitwarden
+display_name: Bitwarden
+version: latest
+category: productivity
+description: Open source password manager
+
+icon: bitwarden
+tags:
+  - passwords
+  - security
+  - vault
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 200
+  ram_mb: 256
+
+install_methods:
+  - type: deb
+    priority: 1
+    url: https://vault.bitwarden.com/download/?app=desktop&platform=linux&variant=deb
+
+  - type: flatpak
+    priority: 2
+    id: com.bitwarden.desktop
+
+  - type: snap
+    priority: 3
+    name: bitwarden
+
+  - type: appimage
+    priority: 4
+    url: https://vault.bitwarden.com/download/?app=desktop&platform=linux
+    name: bitwarden
+
+provides:
+  commands:
+    - bitwarden
+
+options:
+  - id: cli
+    type: boolean
+    label: Bitwarden CLI
+    description: Install command-line interface
+    default: false

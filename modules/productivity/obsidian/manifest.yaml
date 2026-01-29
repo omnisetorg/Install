@@ -1,0 +1,44 @@
+name: obsidian
+display_name: Obsidian
+version: latest
+category: productivity
+description: Knowledge base and note-taking app with Markdown
+
+icon: obsidian
+tags:
+  - notes
+  - markdown
+  - knowledge
+  - pkm
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 300
+  ram_mb: 512
+
+install_methods:
+  - type: deb
+    priority: 1
+    url: https://github.com/obsidianmd/obsidian-releases/releases/latest/download/obsidian_amd64.deb
+
+  - type: flatpak
+    priority: 2
+    id: md.obsidian.Obsidian
+
+  - type: snap
+    priority: 3
+    name: obsidian
+    flags: --classic
+
+  - type: appimage
+    priority: 4
+    url: https://github.com/obsidianmd/obsidian-releases/releases/latest/download/Obsidian-x86_64.AppImage
+    name: obsidian
+
+provides:
+  commands:
+    - obsidian

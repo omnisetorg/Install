@@ -1,0 +1,46 @@
+name: helix
+display_name: Helix
+version: latest
+category: editors
+description: Post-modern modal text editor
+
+icon: helix
+tags:
+  - editor
+  - modal
+  - terminal
+  - vim
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 100
+  ram_mb: 128
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - helix
+
+  - type: snap
+    priority: 2
+    name: helix
+    flags: --classic
+
+  - type: flatpak
+    priority: 3
+    id: com.helix_editor.Helix
+
+  - type: cargo
+    priority: 4
+    crate: helix-term
+
+provides:
+  commands:
+    - hx
+  packages:
+    - helix

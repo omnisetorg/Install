@@ -1,0 +1,33 @@
+name: sqlite
+display_name: SQLite
+version: "3"
+category: databases
+description: Self-contained, serverless SQL database engine
+
+icon: sqlite
+tags:
+  - database
+  - sql
+  - embedded
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 10
+  ram_mb: 64
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - sqlite3
+      - libsqlite3-dev
+
+provides:
+  commands:
+    - sqlite3
+  packages:
+    - sqlite3

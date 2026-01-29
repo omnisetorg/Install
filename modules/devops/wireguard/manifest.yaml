@@ -1,0 +1,34 @@
+name: wireguard
+display_name: WireGuard
+version: latest
+category: devops
+description: Fast, modern VPN tunnel
+
+icon: wireguard
+tags:
+  - vpn
+  - networking
+  - security
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 20
+  ram_mb: 32
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - wireguard
+      - wireguard-tools
+
+provides:
+  commands:
+    - wg
+    - wg-quick
+  packages:
+    - wireguard

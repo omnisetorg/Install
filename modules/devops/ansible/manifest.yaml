@@ -1,0 +1,41 @@
+name: ansible
+display_name: Ansible
+version: latest
+category: devops
+description: Automation platform for configuration management and deployment
+
+icon: ansible
+tags:
+  - automation
+  - configuration
+  - infrastructure
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 200
+  ram_mb: 256
+  dependencies:
+    - python3
+    - python3-pip
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - ansible
+
+  - type: script
+    priority: 2
+    url: https://raw.githubusercontent.com/ansible/ansible/devel/scripts/install.sh
+
+provides:
+  commands:
+    - ansible
+    - ansible-playbook
+    - ansible-galaxy
+  packages:
+    - ansible

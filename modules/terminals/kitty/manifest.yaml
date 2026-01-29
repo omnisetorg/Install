@@ -1,0 +1,40 @@
+name: kitty
+display_name: Kitty
+version: latest
+category: terminals
+description: Fast, GPU-based terminal emulator
+
+icon: kitty
+tags:
+  - terminal
+  - gpu
+  - graphics
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 100
+  ram_mb: 256
+
+install_methods:
+  - type: apt
+    priority: 1
+    packages:
+      - kitty
+
+  - type: script
+    priority: 2
+    url: https://sw.kovidgoyal.net/kitty/installer.sh
+
+  - type: flatpak
+    priority: 3
+    id: io.github.nickvision_kitty
+
+provides:
+  commands:
+    - kitty
+  packages:
+    - kitty

@@ -1,0 +1,45 @@
+name: dotnet
+display_name: .NET SDK
+version: "8.0"
+category: development
+description: Microsoft .NET SDK for building cross-platform applications
+
+icon: dotnet
+tags:
+  - csharp
+  - fsharp
+  - microsoft
+  - sdk
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 1500
+  ram_mb: 1024
+
+install_methods:
+  - type: apt_repo
+    priority: 1
+    key_url: https://packages.microsoft.com/keys/microsoft.asc
+    key_name: microsoft
+    repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/microsoft-ubuntu-jammy-prod jammy main"
+    packages:
+      - dotnet-sdk-8.0
+
+  - type: script
+    priority: 2
+    url: https://dot.net/v1/dotnet-install.sh
+
+  - type: snap
+    priority: 3
+    name: dotnet-sdk
+    flags: --classic
+
+provides:
+  commands:
+    - dotnet
+  packages:
+    - dotnet-sdk-8.0

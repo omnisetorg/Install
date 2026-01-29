@@ -1,0 +1,43 @@
+name: brave
+display_name: Brave Browser
+version: latest
+category: browsers
+description: Privacy-focused web browser with built-in ad blocking
+
+icon: brave
+tags:
+  - browser
+  - privacy
+  - chromium
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 300
+  ram_mb: 512
+
+install_methods:
+  - type: apt_repo
+    priority: 1
+    key_url: https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+    key_name: brave-browser
+    repo: "deb [signed-by=/usr/share/keyrings/brave-browser.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main"
+    packages:
+      - brave-browser
+
+  - type: flatpak
+    priority: 2
+    id: com.brave.Browser
+
+  - type: snap
+    priority: 3
+    name: brave
+
+provides:
+  commands:
+    - brave-browser
+  packages:
+    - brave-browser

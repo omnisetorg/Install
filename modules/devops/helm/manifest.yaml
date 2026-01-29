@@ -1,0 +1,39 @@
+name: helm
+display_name: Helm
+version: latest
+category: devops
+description: Kubernetes package manager
+
+icon: helm
+tags:
+  - kubernetes
+  - packages
+  - charts
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 100
+  ram_mb: 128
+
+install_methods:
+  - type: script
+    priority: 1
+    url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+
+  - type: snap
+    priority: 2
+    name: helm
+    flags: --classic
+
+  - type: binary
+    priority: 3
+    url: https://get.helm.sh/helm-v3.14.0-linux-amd64.tar.gz
+    name: helm
+
+provides:
+  commands:
+    - helm

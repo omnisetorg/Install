@@ -1,0 +1,40 @@
+name: insomnia
+display_name: Insomnia
+version: latest
+category: devtools
+description: API client for REST and GraphQL
+
+icon: insomnia
+tags:
+  - api
+  - rest
+  - graphql
+  - testing
+
+architecture:
+  amd64: true
+  arm64: false
+  armhf: false
+
+requirements:
+  disk_mb: 300
+  ram_mb: 512
+
+install_methods:
+  - type: deb
+    priority: 1
+    url: https://github.com/Kong/insomnia/releases/latest/download/Insomnia.Core-amd64.deb
+
+  - type: flatpak
+    priority: 2
+    id: rest.insomnia.Insomnia
+
+  - type: snap
+    priority: 3
+    name: insomnia
+
+provides:
+  commands:
+    - insomnia
+  packages:
+    - insomnia

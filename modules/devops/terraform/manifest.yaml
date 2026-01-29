@@ -1,0 +1,44 @@
+name: terraform
+display_name: Terraform
+version: latest
+category: devops
+description: Infrastructure as Code tool by HashiCorp
+
+icon: terraform
+tags:
+  - iac
+  - infrastructure
+  - hashicorp
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 100
+  ram_mb: 256
+
+install_methods:
+  - type: apt_repo
+    priority: 1
+    key_url: https://apt.releases.hashicorp.com/gpg
+    key_name: hashicorp
+    repo: "deb [signed-by=/usr/share/keyrings/hashicorp.gpg] https://apt.releases.hashicorp.com jammy main"
+    packages:
+      - terraform
+
+  - type: binary
+    priority: 2
+    url: https://releases.hashicorp.com/terraform/1.7.0/terraform_1.7.0_linux_amd64.zip
+    name: terraform
+
+  - type: snap
+    priority: 3
+    name: terraform
+
+provides:
+  commands:
+    - terraform
+  packages:
+    - terraform

@@ -1,0 +1,56 @@
+name: kubernetes
+display_name: Kubernetes (kubectl)
+version: latest
+category: devops
+description: Kubernetes command-line tool
+
+icon: kubernetes
+tags:
+  - k8s
+  - containers
+  - orchestration
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: true
+
+requirements:
+  disk_mb: 100
+  ram_mb: 128
+
+install_methods:
+  - type: apt_repo
+    priority: 1
+    key_url: https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key
+    key_name: kubernetes
+    repo: "deb [signed-by=/usr/share/keyrings/kubernetes.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /"
+    packages:
+      - kubectl
+
+  - type: snap
+    priority: 2
+    name: kubectl
+    flags: --classic
+
+  - type: binary
+    priority: 3
+    url: https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl
+    name: kubectl
+
+provides:
+  commands:
+    - kubectl
+
+options:
+  - id: minikube
+    type: boolean
+    label: Minikube
+    description: Install Minikube for local development
+    default: false
+
+  - id: kind
+    type: boolean
+    label: Kind
+    description: Install Kind (Kubernetes in Docker)
+    default: false

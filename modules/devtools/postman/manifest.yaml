@@ -1,0 +1,38 @@
+name: postman
+display_name: Postman
+version: latest
+category: devtools
+description: API platform for building and testing APIs
+
+icon: postman
+tags:
+  - api
+  - rest
+  - testing
+
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+
+requirements:
+  disk_mb: 400
+  ram_mb: 512
+
+install_methods:
+  - type: flatpak
+    priority: 1
+    id: com.getpostman.Postman
+
+  - type: snap
+    priority: 2
+    name: postman
+
+  - type: binary
+    priority: 3
+    url: https://dl.pstmn.io/download/latest/linux_64
+    name: postman
+
+provides:
+  commands:
+    - postman
