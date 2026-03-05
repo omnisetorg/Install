@@ -2,6 +2,8 @@
 # OmniSet v2 - Uninstall Helper Functions
 # lib/install/uninstall.sh
 
+set -euo pipefail
+
 # ═══════════════════════════════════════════════════════════════
 # Package Removal Functions
 # ═══════════════════════════════════════════════════════════════

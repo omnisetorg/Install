@@ -2,6 +2,8 @@
 # OmniSet v2 - Print Functions
 # lib/ui/print.sh
 
+set -euo pipefail
+
 # Ensure colors are initialized
 [[ -z "$NC" ]] && source "${OMNISET_LIB}/ui/colors.sh" && init_ui
 

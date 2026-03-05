@@ -2,6 +2,8 @@
 # OmniSet v2 - System Detection
 # lib/system/detect.sh
 
+set -euo pipefail
+
 # ═══════════════════════════════════════════════════════════════
 # Distribution Detection
 # ═══════════════════════════════════════════════════════════════

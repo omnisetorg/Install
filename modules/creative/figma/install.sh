@@ -44,11 +44,11 @@ install_figma() {
     case "$ARCH" in
         amd64)
             local version
-            version=$(curl -s "https://api.github.com/repos/nicolo-ribaudo/nicolo-figma.figma-linux/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/' || echo "")
+            version=$(curl -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://api.github.com/repos/nicolo-ribaudo/nicolo-figma.figma-linux/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/' || echo "")
 
             if [[ -z "$version" ]]; then
                 # Try figma-linux repo
-                version=$(curl -s "https://api.github.com/repos/nicolo-ribaudo/nicolo-figma.figma-linux/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+                version=$(curl -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://api.github.com/repos/nicolo-ribaudo/nicolo-figma.figma-linux/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
             fi
 
             # Download AppImage

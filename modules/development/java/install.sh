@@ -34,7 +34,12 @@ install_sdkman() {
     sudo apt-get install -y curl zip unzip
 
     # Install SDKMAN
-    curl -s "https://get.sdkman.io" | bash
+    local installer
+    installer=$(mktemp)
+    curl -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://get.sdkman.io" -o "$installer"
+    chmod +x "$installer"
+    bash "$installer"
+    rm -f "$installer"
 
     print_success "SDKMAN installed"
 }

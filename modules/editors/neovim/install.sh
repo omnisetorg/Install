@@ -87,7 +87,12 @@ install_dependencies() {
     # Node.js for LSP servers (if not present)
     if ! command -v node &>/dev/null; then
         print_bullet "Installing Node.js for LSP support..."
-        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+        local installer
+        installer=$(mktemp)
+        curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 https://deb.nodesource.com/setup_lts.x -o "$installer"
+        chmod +x "$installer"
+        sudo -E bash "$installer"
+        rm -f "$installer"
         sudo apt-get install -y nodejs
     fi
 

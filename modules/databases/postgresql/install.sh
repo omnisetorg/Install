@@ -12,21 +12,27 @@ if [[ "$INSTALL_TYPE" == "docker" ]] && command -v docker &>/dev/null; then
         echo "PostgreSQL container already exists"
         docker start postgres 2>/dev/null || true
     else
+        # Generate a random password
+        POSTGRES_PASSWORD=$(head -c 16 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 16)
+
         echo "Creating PostgreSQL container..."
         docker run -d \
             --name postgres \
-            -e POSTGRES_PASSWORD=postgres \
+            -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" \
             -e POSTGRES_USER=postgres \
             -e POSTGRES_DB=postgres \
             -p 5432:5432 \
             -v postgres_data:/var/lib/postgresql/data \
             --restart unless-stopped \
             postgres:latest
+
+        echo ""
+        echo "Generated password: $POSTGRES_PASSWORD"
+        echo "Save this password - it cannot be recovered!"
     fi
 
     echo ""
     echo "PostgreSQL running in Docker"
-    echo "Connection: postgresql://postgres:postgres@localhost:5432/postgres"
     echo ""
     echo "Commands:"
     echo "  docker exec -it postgres psql -U postgres"

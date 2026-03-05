@@ -2,6 +2,8 @@
 # OmniSet v2 - Color Definitions
 # lib/ui/colors.sh
 
+set -euo pipefail
+
 # Detect terminal capabilities
 _detect_color_support() {
     # Check if stdout is a terminal

@@ -29,7 +29,7 @@ install_syncthing() {
 
     # Add Syncthing repository
     sudo mkdir -p /etc/apt/keyrings
-    curl -L -o /tmp/syncthing-release-key.asc https://syncthing.net/release-key.txt
+    curl -L --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 -o /tmp/syncthing-release-key.asc https://syncthing.net/release-key.txt
     sudo gpg --dearmor -o /etc/apt/keyrings/syncthing-archive-keyring.gpg /tmp/syncthing-release-key.asc
     rm /tmp/syncthing-release-key.asc
 

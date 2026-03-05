@@ -38,7 +38,12 @@ case "$VERSION" in
 esac
 
 # Install Node.js via NodeSource
-curl -fsSL "$SETUP_URL" | sudo -E bash -
+local installer
+installer=$(mktemp)
+curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "$SETUP_URL" -o "$installer"
+chmod +x "$installer"
+sudo -E bash "$installer"
+rm -f "$installer"
 sudo apt-get install -y nodejs
 
 # Verify installation
@@ -46,16 +51,16 @@ echo "Node.js $(node --version) installed"
 echo "npm $(npm --version)"
 
 # Install global packages if requested
-GLOBAL_PACKAGES=""
-[[ "$OPTIONS" == *"yarn"* ]] && GLOBAL_PACKAGES="$GLOBAL_PACKAGES yarn"
-[[ "$OPTIONS" == *"pnpm"* ]] && GLOBAL_PACKAGES="$GLOBAL_PACKAGES pnpm"
-[[ "$OPTIONS" == *"typescript"* ]] && GLOBAL_PACKAGES="$GLOBAL_PACKAGES typescript"
-[[ "$OPTIONS" == *"nodemon"* ]] && GLOBAL_PACKAGES="$GLOBAL_PACKAGES nodemon"
-[[ "$OPTIONS" == *"pm2"* ]] && GLOBAL_PACKAGES="$GLOBAL_PACKAGES pm2"
+GLOBAL_PACKAGES=()
+[[ "$OPTIONS" == *"yarn"* ]] && GLOBAL_PACKAGES+=("yarn")
+[[ "$OPTIONS" == *"pnpm"* ]] && GLOBAL_PACKAGES+=("pnpm")
+[[ "$OPTIONS" == *"typescript"* ]] && GLOBAL_PACKAGES+=("typescript")
+[[ "$OPTIONS" == *"nodemon"* ]] && GLOBAL_PACKAGES+=("nodemon")
+[[ "$OPTIONS" == *"pm2"* ]] && GLOBAL_PACKAGES+=("pm2")
 
-if [[ -n "$GLOBAL_PACKAGES" ]]; then
-    echo "Installing global packages:$GLOBAL_PACKAGES"
-    sudo npm install -g $GLOBAL_PACKAGES
+if [[ ${#GLOBAL_PACKAGES[@]} -gt 0 ]]; then
+    echo "Installing global packages: ${GLOBAL_PACKAGES[*]}"
+    sudo npm install -g "${GLOBAL_PACKAGES[@]}"
 fi
 
 echo "Node.js installation complete"

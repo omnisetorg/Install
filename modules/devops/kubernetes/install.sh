@@ -28,9 +28,9 @@ install_kubectl() {
     fi
 
     local version
-    version=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+    version=$(curl -L -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 https://dl.k8s.io/release/stable.txt)
 
-    curl -LO "https://dl.k8s.io/release/${version}/bin/linux/${ARCH}/kubectl"
+    curl -LO --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://dl.k8s.io/release/${version}/bin/linux/${ARCH}/kubectl"
     chmod +x kubectl
     sudo mv kubectl /usr/local/bin/
 
@@ -46,7 +46,7 @@ install_k9s() {
     fi
 
     local version
-    version=$(curl -s "https://api.github.com/repos/derailed/k9s/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    version=$(curl -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://api.github.com/repos/derailed/k9s/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 
     local arch_name
     case "$ARCH" in
@@ -72,7 +72,7 @@ install_kubectx() {
     fi
 
     local version
-    version=$(curl -s "https://api.github.com/repos/ahmetb/kubectx/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    version=$(curl -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://api.github.com/repos/ahmetb/kubectx/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 
     local arch_name
     case "$ARCH" in

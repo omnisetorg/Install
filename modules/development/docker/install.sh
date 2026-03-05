@@ -97,7 +97,7 @@ install_docker_debian() {
             ;;
     esac
 
-    curl -fsSL "https://download.docker.com/linux/${docker_distro}/gpg" | \
+    curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://download.docker.com/linux/${docker_distro}/gpg" | \
         sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
     sudo chmod a+r /etc/apt/keyrings/docker.gpg
 

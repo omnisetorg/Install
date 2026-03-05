@@ -2,6 +2,8 @@
 # OmniSet v2 - Global Constants
 # lib/core/constants.sh
 
+set -euo pipefail
+
 # Version
 readonly OMNISET_VERSION="2.0.0"
 readonly OMNISET_MIN_BASH_VERSION="4.0"

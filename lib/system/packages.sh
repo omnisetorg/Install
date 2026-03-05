@@ -2,6 +2,8 @@
 # OmniSet v2 - Package Manager Abstraction
 # lib/system/packages.sh
 
+set -euo pipefail
+
 # Package manager variables (set by detect_package_manager)
 export PKG_MANAGER=""
 export PKG_INSTALL=""
@@ -299,9 +301,9 @@ add_apt_repo() {
         local key_file="${key_dir}/${key_name:-custom}.gpg"
 
         if [[ "$key_url" == *.asc ]] || [[ "$key_url" == *"gpg"* ]]; then
-            curl -fsSL "$key_url" | sudo gpg --dearmor -o "$key_file"
+            curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "$key_url" | sudo gpg --dearmor -o "$key_file"
         else
-            curl -fsSL "$key_url" | sudo tee "$key_file" > /dev/null
+            curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "$key_url" | sudo tee "$key_file" > /dev/null
         fi
     fi
 
@@ -358,7 +360,12 @@ install_cargo() {
 
     if ! command -v cargo &>/dev/null; then
         print_info "Installing Rust toolchain..."
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        local installer
+        installer=$(omniset_mktemp)
+        curl --proto '=https' --tlsv1.2 -sSf --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 https://sh.rustup.rs -o "$installer"
+        chmod +x "$installer"
+        sh "$installer" -y
+        rm -f "$installer"
         source "$HOME/.cargo/env"
     fi
 

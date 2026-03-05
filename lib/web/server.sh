@@ -2,9 +2,11 @@
 # Local web server for module selection
 # Uses Python's built-in HTTP server with custom handler
 
+set -euo pipefail
+
 OMNISET_WEB_PORT="${OMNISET_WEB_PORT:-9999}"
 OMNISET_WEB_DIR="${OMNISET_ROOT}/web"
-OMNISET_CALLBACK_FILE="/tmp/omniset-selection-$$"
+OMNISET_CALLBACK_FILE=$(omniset_mktemp)
 
 start_web_server() {
     local port="$OMNISET_WEB_PORT"
@@ -19,7 +21,8 @@ start_web_server() {
     rm -f "$OMNISET_CALLBACK_FILE"
 
     # Create the Python server script
-    local server_script="/tmp/omniset-server-$$.py"
+    local server_script
+    server_script=$(omniset_mktemp --suffix=.py)
     cat > "$server_script" << 'PYTHON_EOF'
 #!/usr/bin/env python3
 import http.server
@@ -54,7 +57,7 @@ class OmniSetHandler(http.server.SimpleHTTPRequestHandler):
                 # Send success response
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
-                self.send_header('Access-Control-Allow-Origin', '*')
+                self.send_header('Access-Control-Allow-Origin', f'http://localhost:{PORT}')
                 self.end_headers()
                 self.wfile.write(json.dumps({'status': 'ok', 'message': 'Selection received'}).encode())
 
@@ -72,7 +75,7 @@ class OmniSetHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_OPTIONS(self):
         self.send_response(200)
-        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Origin', f'http://localhost:{PORT}')
         self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()

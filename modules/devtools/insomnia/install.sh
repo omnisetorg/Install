@@ -37,7 +37,7 @@ install_insomnia() {
     case "$ARCH" in
         amd64)
             local version
-            version=$(curl -s "https://api.github.com/repos/Kong/insomnia/releases/latest" | grep '"tag_name":' | sed -E 's/.*"core@([^"]+)".*/\1/')
+            version=$(curl -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://api.github.com/repos/Kong/insomnia/releases/latest" | grep '"tag_name":' | sed -E 's/.*"core@([^"]+)".*/\1/')
 
             local url="https://github.com/Kong/insomnia/releases/download/core%40${version}/Insomnia.Core-${version}.deb"
             wget -qO /tmp/insomnia.deb "$url"

@@ -28,7 +28,12 @@ install_helm() {
     fi
 
     # Use official install script
-    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+    local installer
+    installer=$(mktemp)
+    curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 -o "$installer"
+    chmod +x "$installer"
+    bash "$installer"
+    rm -f "$installer"
 
     print_success "Helm installed"
 }

@@ -30,7 +30,7 @@ install_wezterm() {
     case "$ARCH" in
         amd64)
             # Add WezTerm repository
-            curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
+            curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
             echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | \
                 sudo tee /etc/apt/sources.list.d/wezterm.list
 
@@ -47,7 +47,7 @@ install_wezterm() {
 
             # Download AppImage
             local version
-            version=$(curl -s "https://api.github.com/repos/wez/wezterm/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+            version=$(curl -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://api.github.com/repos/wez/wezterm/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 
             wget -qO /tmp/wezterm.AppImage "https://github.com/wez/wezterm/releases/download/${version}/WezTerm-${version}-Ubuntu20.04.AppImage"
             chmod +x /tmp/wezterm.AppImage

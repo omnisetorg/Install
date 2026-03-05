@@ -32,7 +32,11 @@ if [[ "$OPTIONS" == *"pipenv"* ]]; then
     pip3 install --user pipenv
 fi
 if [[ "$OPTIONS" == *"poetry"* ]]; then
-    curl -sSL https://install.python-poetry.org | python3 -
+    local installer
+    installer=$(mktemp)
+    curl -sSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 https://install.python-poetry.org -o "$installer"
+    python3 "$installer"
+    rm -f "$installer"
 fi
 if [[ "$OPTIONS" == *"jupyter"* ]]; then
     pip3 install --user jupyter

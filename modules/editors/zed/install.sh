@@ -29,7 +29,12 @@ install_zed() {
     case "$ARCH" in
         amd64|arm64)
             # Official installer
-            curl -fsSL https://zed.dev/install.sh | sh
+            local installer
+            installer=$(mktemp)
+            curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 https://zed.dev/install.sh -o "$installer"
+            chmod +x "$installer"
+            sh "$installer"
+            rm -f "$installer"
             ;;
         *)
             print_error "Zed not available for $ARCH"
