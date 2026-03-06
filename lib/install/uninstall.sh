@@ -115,8 +115,8 @@ remove_config_dirs() {
     )
 
     # Add extra directories
-    for dir in "${extra_dirs[@]}"; do
-        dirs+=("$dir")
+    for dir in "${extra_dirs[@]:-}"; do
+        [[ -n "$dir" ]] && dirs+=("$dir")
     done
 
     for dir in "${dirs[@]}"; do

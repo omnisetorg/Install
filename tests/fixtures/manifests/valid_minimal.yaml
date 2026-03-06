@@ -1,0 +1,17 @@
+name: test-module
+display_name: Test Module
+category: development
+description: A minimal valid manifest for testing
+architecture:
+  amd64: true
+  arm64: true
+  armhf: false
+install_methods:
+  - type: apt
+    packages:
+      - test-module
+provides:
+  commands:
+    - test-cmd
+  packages:
+    - test-module

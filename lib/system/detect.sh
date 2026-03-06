@@ -16,29 +16,35 @@ detect_distro() {
     export DISTRO_FAMILY=""
     export DISTRO_TYPE=""
 
+    # Configurable file paths for testability
+    local os_release="${OMNISET_OS_RELEASE_FILE:-/etc/os-release}"
+    local lsb_release_file="${OMNISET_LSB_RELEASE_FILE:-/etc/lsb-release}"
+    local debian_version_file="${OMNISET_DEBIAN_VERSION_FILE:-/etc/debian_version}"
+    local redhat_release_file="${OMNISET_REDHAT_RELEASE_FILE:-/etc/redhat-release}"
+
     # Try /etc/os-release first (standard on modern distros)
-    if [[ -f /etc/os-release ]]; then
+    if [[ -f "$os_release" ]]; then
         # shellcheck source=/dev/null
-        source /etc/os-release
+        source "$os_release"
         DISTRO_ID="${ID:-unknown}"
         DISTRO_VERSION="${VERSION_ID:-}"
         DISTRO_NAME="${PRETTY_NAME:-$ID}"
         DISTRO_FAMILY="${ID_LIKE:-$ID}"
-    elif [[ -f /etc/lsb-release ]]; then
+    elif [[ -f "$lsb_release_file" ]]; then
         # shellcheck source=/dev/null
-        source /etc/lsb-release
+        source "$lsb_release_file"
         DISTRO_ID="${DISTRIB_ID,,}"  # lowercase
         DISTRO_VERSION="${DISTRIB_RELEASE:-}"
         DISTRO_NAME="${DISTRIB_DESCRIPTION:-$DISTRIB_ID}"
         DISTRO_FAMILY="$DISTRO_ID"
-    elif [[ -f /etc/debian_version ]]; then
+    elif [[ -f "$debian_version_file" ]]; then
         DISTRO_ID="debian"
-        DISTRO_VERSION=$(cat /etc/debian_version)
+        DISTRO_VERSION=$(cat "$debian_version_file")
         DISTRO_NAME="Debian $DISTRO_VERSION"
         DISTRO_FAMILY="debian"
-    elif [[ -f /etc/redhat-release ]]; then
+    elif [[ -f "$redhat_release_file" ]]; then
         DISTRO_ID="rhel"
-        DISTRO_NAME=$(cat /etc/redhat-release)
+        DISTRO_NAME=$(cat "$redhat_release_file")
         DISTRO_FAMILY="rhel fedora"
     else
         DISTRO_ID="unknown"
@@ -135,8 +141,14 @@ detect_virtualization() {
     export IS_VM=false
     export IS_WSL=false
 
+    # Configurable file paths for testability
+    local proc_version="${OMNISET_PROC_VERSION_FILE:-/proc/version}"
+    local dockerenv_file="${OMNISET_DOCKERENV_FILE:-/.dockerenv}"
+    local cgroup_file="${OMNISET_CGROUP_FILE:-/proc/1/cgroup}"
+    local cpuinfo_file="${OMNISET_CPUINFO_FILE:-/proc/cpuinfo}"
+
     # Check for WSL
-    if grep -qi "microsoft" /proc/version 2>/dev/null; then
+    if grep -qi "microsoft" "$proc_version" 2>/dev/null; then
         VIRT_TYPE="wsl"
         IS_VM=true
         IS_WSL=true
@@ -144,20 +156,20 @@ detect_virtualization() {
     fi
 
     # Check for Docker
-    if [[ -f /.dockerenv ]]; then
+    if [[ -f "$dockerenv_file" ]]; then
         VIRT_TYPE="docker"
         IS_CONTAINER=true
         return
     fi
 
     # Check for container via cgroup
-    if grep -q "/docker\|/lxc\|/kubepods" /proc/1/cgroup 2>/dev/null; then
+    if grep -q "/docker\|/lxc\|/kubepods" "$cgroup_file" 2>/dev/null; then
         IS_CONTAINER=true
-        if grep -q "/docker" /proc/1/cgroup 2>/dev/null; then
+        if grep -q "/docker" "$cgroup_file" 2>/dev/null; then
             VIRT_TYPE="docker"
-        elif grep -q "/lxc" /proc/1/cgroup 2>/dev/null; then
+        elif grep -q "/lxc" "$cgroup_file" 2>/dev/null; then
             VIRT_TYPE="lxc"
-        elif grep -q "/kubepods" /proc/1/cgroup 2>/dev/null; then
+        elif grep -q "/kubepods" "$cgroup_file" 2>/dev/null; then
             VIRT_TYPE="kubernetes"
         fi
         return
@@ -182,11 +194,11 @@ detect_virtualization() {
     fi
 
     # Check CPU info for hypervisors
-    if grep -q "hypervisor" /proc/cpuinfo 2>/dev/null; then
+    if grep -q "hypervisor" "$cpuinfo_file" 2>/dev/null; then
         IS_VM=true
 
         # Try to identify specific hypervisor
-        if grep -q "QEMU" /proc/cpuinfo 2>/dev/null; then
+        if grep -q "QEMU" "$cpuinfo_file" 2>/dev/null; then
             VIRT_TYPE="qemu"
         elif [[ -d /proc/xen ]]; then
             VIRT_TYPE="xen"

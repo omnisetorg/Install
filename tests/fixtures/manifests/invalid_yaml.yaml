@@ -1,0 +1,5 @@
+name: test-module
+display_name: Test Module
+  bad_indent: this is invalid yaml
+    even worse: [
+description: broken

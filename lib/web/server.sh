@@ -6,10 +6,15 @@ set -euo pipefail
 
 OMNISET_WEB_PORT="${OMNISET_WEB_PORT:-9999}"
 OMNISET_WEB_DIR="${OMNISET_ROOT}/web"
-OMNISET_CALLBACK_FILE=$(omniset_mktemp)
+OMNISET_CALLBACK_FILE="${OMNISET_CALLBACK_FILE:-}"
 
 start_web_server() {
     local port="$OMNISET_WEB_PORT"
+
+    # Initialize callback file if not set
+    if [[ -z "$OMNISET_CALLBACK_FILE" ]]; then
+        OMNISET_CALLBACK_FILE=$(omniset_mktemp)
+    fi
 
     # Check if Python is available
     if ! command -v python3 &>/dev/null; then
