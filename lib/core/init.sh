@@ -137,7 +137,7 @@ check_yq() {
     local yq_url="https://github.com/mikefarah/yq/releases/download/${yq_version}/${yq_binary}"
 
     # Try to download and install yq
-    if curl -fsSL "$yq_url" -o /tmp/yq && chmod +x /tmp/yq; then
+    if curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "$yq_url" -o /tmp/yq && chmod +x /tmp/yq; then
         if sudo mv /tmp/yq /usr/local/bin/yq; then
             print_success "yq installed successfully"
             return 0
@@ -177,12 +177,31 @@ check_yq() {
 }
 
 # ═══════════════════════════════════════════════════════════════
+# Temp File Tracking
+# ═══════════════════════════════════════════════════════════════
+
+# Temp file tracking for cleanup
+declare -a _OMNISET_TEMP_FILES=()
+
+omniset_mktemp() {
+    local tmp
+    tmp=$(mktemp "$@")
+    _OMNISET_TEMP_FILES+=("$tmp")
+    echo "$tmp"
+}
+
+# ═══════════════════════════════════════════════════════════════
 # Cleanup
 # ═══════════════════════════════════════════════════════════════
 
 # Cleanup function for exit
 omniset_cleanup() {
     local exit_code=$?
+
+    # Remove tracked temp files
+    for f in "${_OMNISET_TEMP_FILES[@]:-}"; do
+        rm -rf "$f" 2>/dev/null || true
+    done
 
     # Remove temp directory if exists
     if [[ -d "${OMNISET_TEMP_DIR:-}" ]]; then

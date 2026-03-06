@@ -136,6 +136,73 @@ install_methods:
 
 Modules prefer apt/deb packages. Flatpak/Snap used only as fallback.
 
+## Testing
+
+Tests use [BATS](https://github.com/bats-core/bats-core) (Bash Automated Testing System). The test framework libraries are included as git submodules.
+
+### Prerequisites
+
+```bash
+# Initialize BATS submodules (one-time)
+cd tests
+make setup-bats
+
+# yq is required for integration tests
+# Ubuntu/Debian:
+sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+sudo chmod +x /usr/local/bin/yq
+```
+
+### Running Tests
+
+All commands run from the `tests/` directory:
+
+```bash
+make test              # Unit + integration (all non-E2E tests)
+make test-unit         # Unit tests only (~287 tests)
+make test-integration  # Integration tests only (manifest validation)
+```
+
+#### By module
+
+```bash
+make test-core         # core/ — constants, init, temp files
+make test-ui           # ui/ — colors, print functions
+make test-system       # system/ — detect, packages
+make test-install      # install/ — module install/uninstall logic
+make test-cli          # cli/ — CLI command parsing
+make test-web          # web/ — server, app.js
+make test-modules      # modules/ — apt, docker, script, fallback modules
+```
+
+#### By priority (for quick feedback)
+
+```bash
+make test-p0           # Critical: module install + system detect
+make test-p1           # Important: packages + manifest validation
+make test-p2           # Standard: CLI + module structure
+make test-p3           # Low: constants, colors, print, uninstall
+```
+
+#### E2E tests (require Docker)
+
+E2E tests run real installs inside Docker containers. They are slow (~30 min total) and triggered manually via GitHub Actions.
+
+```bash
+make test-e2e              # Install verification
+make test-e2e-uninstall    # Uninstall verification
+make test-e2e-idempotency  # Double install causes no errors
+make test-e2e-conflicts    # Overlapping modules coexist
+make test-e2e-doctor       # omniset doctor works after installs
+make test-e2e-all          # All of the above
+```
+
+### CI
+
+Tests run on-demand via `workflow_dispatch` (GitHub Actions → Run workflow). The workflow runs unit + integration tests on both x86_64 and arm64 runners.
+
+See [tests/README.md](tests/README.md) for more details.
+
 ## Acknowledgments
 
 OmniSet is inspired by:

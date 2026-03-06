@@ -2,6 +2,8 @@
 # OmniSet v2 - Color Definitions
 # lib/ui/colors.sh
 
+set -euo pipefail
+
 # Detect terminal capabilities
 _detect_color_support() {
     # Check if stdout is a terminal
@@ -10,7 +12,7 @@ _detect_color_support() {
     fi
 
     # Check TERM
-    case "$TERM" in
+    case "${TERM:-dumb}" in
         xterm*|rxvt*|vte*|screen*|tmux*|linux|cygwin)
             return 0
             ;;
@@ -29,7 +31,7 @@ _detect_color_support() {
 
 # Detect Unicode support
 _detect_unicode_support() {
-    if [[ "$LANG" =~ UTF-8 ]] || [[ "$LC_ALL" =~ UTF-8 ]] || [[ "$LC_CTYPE" =~ UTF-8 ]]; then
+    if [[ "${LANG:-}" =~ UTF-8 ]] || [[ "${LC_ALL:-}" =~ UTF-8 ]] || [[ "${LC_CTYPE:-}" =~ UTF-8 ]]; then
         return 0
     fi
     return 1

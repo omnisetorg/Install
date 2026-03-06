@@ -44,7 +44,7 @@ install_obsidian() {
     case "$ARCH" in
         amd64)
             local version
-            version=$(curl -s "https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+            version=$(curl -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
 
             wget -qO /tmp/obsidian.AppImage "https://github.com/obsidianmd/obsidian-releases/releases/download/v${version}/Obsidian-${version}.AppImage"
             chmod +x /tmp/obsidian.AppImage

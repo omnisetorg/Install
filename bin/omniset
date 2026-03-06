@@ -49,6 +49,7 @@ INSTALL OPTIONS:
     omniset install --from-url <url>          Install from URL-encoded selection
     omniset install --from-config <file>      Install from YAML config file
     omniset install --interactive             Interactive TUI selector
+    omniset install --parallel                Install modules in parallel
 
 EXAMPLES:
     omniset install vscode docker chrome
@@ -70,6 +71,7 @@ cmd_install() {
     local from_config=""
     local force=false
     local dry_run=false
+    local parallel=false
 
     # Parse arguments
     while [[ $# -gt 0 ]]; do
@@ -98,6 +100,10 @@ cmd_install() {
                 dry_run=true
                 shift
                 ;;
+            --parallel|-p)
+                parallel=true
+                shift
+                ;;
             --help|-h)
                 echo "Usage: omniset install [OPTIONS] [MODULES...]"
                 echo ""
@@ -108,6 +114,7 @@ cmd_install() {
                 echo "  --from-config FILE   Install from YAML config file"
                 echo "  --force, -f          Force reinstall"
                 echo "  --dry-run            Show what would be installed"
+                echo "  --parallel, -p       Install modules in parallel"
                 return 0
                 ;;
             -*)
@@ -154,6 +161,14 @@ cmd_install() {
         return 1
     fi
 
+    # Validate module IDs
+    for mod in "${modules[@]}"; do
+        if ! validate_module_id "$mod"; then
+            print_error "Invalid module name: $mod (only alphanumeric, hyphens, underscores allowed)"
+            return 1
+        fi
+    done
+
     # Show what will be installed
     print_header "Installation Plan"
     print_info "Modules to install:"
@@ -177,8 +192,9 @@ cmd_install() {
     # Install modules
     discover_modules
 
-    # Export force flag for install_module to use
+    # Export flags for install_module to use
     export OMNISET_FORCE_INSTALL="$force"
+    export OMNISET_PARALLEL="$parallel"
     install_modules "${modules[@]}"
 }
 
@@ -571,6 +587,13 @@ main() {
             ;;
         *)
             # Check if it's a module name (shorthand for install)
+            # Validate before filesystem operations
+            if ! validate_module_id "$command"; then
+                print_error "Unknown command: $command"
+                echo ""
+                cmd_help
+                exit 1
+            fi
             # Need to discover modules first to check
             discover_modules
             if [[ -n "${MODULE_REGISTRY[$command]:-}" ]]; then

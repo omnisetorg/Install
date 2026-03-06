@@ -31,7 +31,7 @@ install_methods:
     volumes:
       - /var/lib/omniset/mariadb:/var/lib/mysql
     environment:
-      MARIADB_ROOT_PASSWORD: omniset_dev
+      MARIADB_ROOT_PASSWORD: __GENERATE__
       MARIADB_DATABASE: dev
 
   - type: apt

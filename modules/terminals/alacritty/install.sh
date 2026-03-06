@@ -52,7 +52,12 @@ install_alacritty() {
 
     # Install Rust if not present
     if ! command -v cargo &>/dev/null; then
-        curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+        local installer
+        installer=$(mktemp)
+        curl --proto '=https' --tlsv1.2 -sSf --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 https://sh.rustup.rs -o "$installer"
+        chmod +x "$installer"
+        sh "$installer" -y
+        rm -f "$installer"
         source "$HOME/.cargo/env"
     fi
 

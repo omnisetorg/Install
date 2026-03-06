@@ -38,7 +38,7 @@ install_notion() {
     case "$ARCH" in
         amd64)
             local version
-            version=$(curl -s "https://api.github.com/repos/notion-enhancer/notion-repackaged/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+            version=$(curl -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://api.github.com/repos/notion-enhancer/notion-repackaged/releases/latest" | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
 
             if [[ -n "$version" ]]; then
                 wget -qO /tmp/notion.deb "https://github.com/notion-enhancer/notion-repackaged/releases/download/v${version}/notion-app-enhanced_${version}_amd64.deb"

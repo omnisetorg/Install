@@ -28,7 +28,12 @@ install_tailscale() {
     fi
 
     # Use official install script
-    curl -fsSL https://tailscale.com/install.sh | sh
+    local installer
+    installer=$(mktemp)
+    curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 https://tailscale.com/install.sh -o "$installer"
+    chmod +x "$installer"
+    sh "$installer"
+    rm -f "$installer"
 
     print_success "Tailscale installed"
 }

@@ -63,7 +63,12 @@ install_zoxide() {
 
     case "$ARCH" in
         amd64|arm64)
-            curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+            local installer
+            installer=$(mktemp)
+            curl -sSfL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh -o "$installer"
+            chmod +x "$installer"
+            sh "$installer"
+            rm -f "$installer"
             ;;
         armhf)
             if command -v cargo &>/dev/null; then
@@ -115,7 +120,7 @@ install_eza() {
             else
                 # Download from GitHub
                 local version
-                version=$(curl -s "https://api.github.com/repos/eza-community/eza/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+                version=$(curl -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://api.github.com/repos/eza-community/eza/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
                 wget -qO /tmp/eza.tar.gz "https://github.com/eza-community/eza/releases/download/${version}/eza_x86_64-unknown-linux-gnu.tar.gz"
                 tar -xzf /tmp/eza.tar.gz -C /tmp
                 sudo mv /tmp/eza /usr/local/bin/
@@ -199,7 +204,7 @@ install_btop() {
             else
                 # Download from GitHub
                 local version
-                version=$(curl -s "https://api.github.com/repos/aristocratos/btop/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+                version=$(curl -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://api.github.com/repos/aristocratos/btop/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
                 wget -qO /tmp/btop.tbz "https://github.com/aristocratos/btop/releases/download/${version}/btop-x86_64-linux-musl.tbz"
                 tar -xjf /tmp/btop.tbz -C /tmp
                 sudo mv /tmp/btop/bin/btop /usr/local/bin/
@@ -234,7 +239,7 @@ install_fastfetch() {
                 sudo apt-get install -y fastfetch
             else
                 local version
-                version=$(curl -s "https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+                version=$(curl -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://api.github.com/repos/fastfetch-cli/fastfetch/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
                 wget -qO /tmp/fastfetch.deb "https://github.com/fastfetch-cli/fastfetch/releases/download/${version}/fastfetch-linux-amd64.deb"
                 sudo dpkg -i /tmp/fastfetch.deb || sudo apt-get install -f -y
                 rm /tmp/fastfetch.deb

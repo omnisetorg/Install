@@ -9,7 +9,7 @@ OPTIONS="${2:-}"
 
 # Parse options
 MARIADB_VERSION="${OPTIONS:-11.6}"
-MARIADB_ROOT_PASSWORD="${MARIADB_ROOT_PASSWORD:-mariadb}"
+MARIADB_ROOT_PASSWORD="${MARIADB_ROOT_PASSWORD:-$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 16)}"
 MARIADB_PORT="${MARIADB_PORT:-3307}"
 
 # Source library functions if available

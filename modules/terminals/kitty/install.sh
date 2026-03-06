@@ -30,7 +30,12 @@ install_kitty() {
     case "$ARCH" in
         amd64|arm64)
             # Official installer (recommended)
-            curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin launch=n
+            local installer
+            installer=$(mktemp)
+            curl -L --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 https://sw.kovidgoyal.net/kitty/installer.sh -o "$installer"
+            chmod +x "$installer"
+            sh "$installer" launch=n
+            rm -f "$installer"
 
             # Create symlinks
             mkdir -p ~/.local/bin

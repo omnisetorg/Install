@@ -11,7 +11,7 @@ fi
 echo "Installing Go..."
 
 # Get latest version
-GO_VERSION=$(curl -s https://go.dev/VERSION?m=text | head -1)
+GO_VERSION=$(curl -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 https://go.dev/VERSION?m=text | head -1)
 
 # Map architecture
 case "$ARCH" in

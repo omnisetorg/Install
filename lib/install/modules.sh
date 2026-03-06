@@ -2,6 +2,8 @@
 # OmniSet v2 - Module System
 # lib/install/modules.sh
 
+set -euo pipefail
+
 # Module registry
 declare -A MODULE_REGISTRY
 declare -a INSTALLED_MODULES=()
@@ -80,16 +82,30 @@ list_modules() {
         esac
     done
 
-    [[ "$format" == "json" ]] && echo "]"
+    if [[ "$format" == "json" ]]; then
+        echo "]"
+    fi
 }
 
 # ═══════════════════════════════════════════════════════════════
 # Module Information
 # ═══════════════════════════════════════════════════════════════
 
+# Validate module ID (alphanumeric, hyphens, underscores only)
+validate_module_id() {
+    local id="$1"
+    [[ "$id" =~ ^[a-zA-Z0-9_-]+$ ]] || return 1
+}
+
 # Get module directory
 get_module_dir() {
     local module_id="$1"
+
+    # Validate module ID before filesystem operations
+    if ! validate_module_id "$module_id"; then
+        print_error "Invalid module ID: $module_id (only alphanumeric, hyphens, underscores allowed)"
+        return 1
+    fi
 
     # Check registry first
     if [[ -n "${MODULE_REGISTRY[$module_id]:-}" ]]; then
@@ -226,11 +242,17 @@ install_module() {
     fi
 
     # Install dependencies (system packages)
-    local deps
-    deps=$(yq -r '.requirements.dependencies[]? // empty' "$manifest" 2>/dev/null)
-    if [[ -n "$deps" ]]; then
+    local -a dep_array=()
+    while IFS= read -r dep; do
+        [[ -n "$dep" ]] && dep_array+=("$dep")
+    done < <(yq -r '.requirements.dependencies[]? // empty' "$manifest" 2>/dev/null)
+    if [[ ${#dep_array[@]} -gt 0 ]]; then
         print_bullet "Installing dependencies..."
-        pkg_install $deps || true
+        if ! pkg_install "${dep_array[@]}"; then
+            print_error "Failed to install dependencies for $module_id"
+            FAILED_MODULES+=("$module_id")
+            return 1
+        fi
     fi
 
     # Run install script if exists
@@ -282,9 +304,11 @@ auto_install_module() {
 
         case "$method_type" in
             apt)
-                local packages
-                packages=$(yq -r ".install_methods[$i].packages[]" "$manifest" 2>/dev/null)
-                if [[ -n "$packages" ]] && pkg_install $packages; then
+                local -a pkg_array=()
+                while IFS= read -r pkg; do
+                    [[ -n "$pkg" ]] && pkg_array+=("$pkg")
+                done < <(yq -r ".install_methods[$i].packages[]" "$manifest" 2>/dev/null)
+                if [[ ${#pkg_array[@]} -gt 0 ]] && pkg_install "${pkg_array[@]}"; then
                     return 0
                 fi
                 ;;
@@ -292,8 +316,9 @@ auto_install_module() {
             deb)
                 local url
                 url=$(yq -r ".install_methods[$i].url" "$manifest")
-                local temp_deb="/tmp/${module_id}.deb"
-                if curl -fsSL -o "$temp_deb" "$url" && install_deb "$temp_deb"; then
+                local temp_deb
+                temp_deb=$(omniset_mktemp --suffix=.deb)
+                if curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 -o "$temp_deb" "$url" && install_deb "$temp_deb"; then
                     rm -f "$temp_deb"
                     return 0
                 fi
@@ -301,14 +326,18 @@ auto_install_module() {
                 ;;
 
             apt_repo)
-                local key_url repo key_name packages
+                local key_url repo key_name
                 key_url=$(yq -r ".install_methods[$i].key_url // empty" "$manifest")
                 repo=$(yq -r ".install_methods[$i].repo" "$manifest")
                 key_name=$(yq -r ".install_methods[$i].key_name // \"$module_id\"" "$manifest")
-                packages=$(yq -r ".install_methods[$i].packages[]" "$manifest" 2>/dev/null)
+
+                local -a repo_pkg_array=()
+                while IFS= read -r pkg; do
+                    [[ -n "$pkg" ]] && repo_pkg_array+=("$pkg")
+                done < <(yq -r ".install_methods[$i].packages[]" "$manifest" 2>/dev/null)
 
                 if add_apt_repo "$repo" "$key_url" "$key_name"; then
-                    if [[ -n "$packages" ]] && pkg_install $packages; then
+                    if [[ ${#repo_pkg_array[@]} -gt 0 ]] && pkg_install "${repo_pkg_array[@]}"; then
                         return 0
                     fi
                 fi
@@ -344,13 +373,13 @@ auto_install_module() {
                 script_url=$(yq -r ".install_methods[$i].url" "$manifest")
 
                 # Security: Download script first for inspection
-                local temp_script="${OMNISET_TEMP_DIR:-/tmp}/install_script_$$.sh"
-                mkdir -p "$(dirname "$temp_script")"
+                local temp_script
+                temp_script=$(omniset_mktemp --suffix=.sh)
 
                 print_warning "This install method downloads and executes a script from:"
                 print_bullet "$script_url"
 
-                if ! curl -fsSL "$script_url" -o "$temp_script"; then
+                if ! curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "$script_url" -o "$temp_script"; then
                     print_error "Failed to download install script"
                     rm -f "$temp_script"
                     continue
@@ -387,12 +416,9 @@ auto_install_module() {
 
             docker)
                 # Docker-based installation (for databases, services, etc.)
-                local image container_name ports volumes env_vars
+                local image container_name
                 image=$(yq -r ".install_methods[$i].image" "$manifest")
                 container_name=$(yq -r ".install_methods[$i].container_name // \"$module_id\"" "$manifest")
-                ports=$(yq -r ".install_methods[$i].ports[]? // empty" "$manifest" 2>/dev/null)
-                volumes=$(yq -r ".install_methods[$i].volumes[]? // empty" "$manifest" 2>/dev/null)
-                env_vars=$(yq -r ".install_methods[$i].environment | to_entries | .[] | \"-e \" + .key + \"=\" + .value" "$manifest" 2>/dev/null)
 
                 # Check if Docker is available
                 if ! command -v docker &>/dev/null; then
@@ -416,30 +442,40 @@ auto_install_module() {
                     continue
                 fi
 
-                # Build docker run command
-                local docker_cmd="docker run -d --name $container_name --restart unless-stopped"
+                # Build docker run command using safe array
+                local -a docker_args=("run" "-d" "--name" "$container_name" "--restart" "unless-stopped")
 
                 # Add ports
-                for port in $ports; do
-                    docker_cmd+=" -p $port"
-                done
+                while IFS= read -r port; do
+                    [[ -n "$port" ]] && docker_args+=("-p" "$port")
+                done < <(yq -r ".install_methods[$i].ports[]? // empty" "$manifest" 2>/dev/null)
 
                 # Add volumes
-                for vol in $volumes; do
-                    # Create host directory if needed
-                    local host_path="${vol%%:*}"
-                    if [[ "$host_path" == /* ]]; then
-                        sudo mkdir -p "$host_path"
+                while IFS= read -r vol; do
+                    if [[ -n "$vol" ]]; then
+                        # Create host directory if needed
+                        local host_path="${vol%%:*}"
+                        if [[ "$host_path" == /* ]]; then
+                            sudo mkdir -p "$host_path"
+                        fi
+                        docker_args+=("-v" "$vol")
                     fi
-                    docker_cmd+=" -v $vol"
-                done
+                done < <(yq -r ".install_methods[$i].volumes[]? // empty" "$manifest" 2>/dev/null)
 
-                # Add environment variables
-                if [[ -n "$env_vars" ]]; then
-                    docker_cmd+=" $env_vars"
-                fi
+                # Add environment variables (with auto-generated passwords)
+                while IFS= read -r line; do
+                    if [[ -n "$line" ]]; then
+                        local env_key="${line%%=*}"
+                        local env_value="${line#*=}"
+                        if [[ "$env_value" == "__GENERATE__" ]]; then
+                            env_value=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 16)
+                            print_info "Generated password for $env_key: $env_value"
+                        fi
+                        docker_args+=("-e" "${env_key}=${env_value}")
+                    fi
+                done < <(yq -r ".install_methods[$i].environment | to_entries[]? | .key + \"=\" + .value" "$manifest" 2>/dev/null)
 
-                docker_cmd+=" $image"
+                docker_args+=("$image")
 
                 # Remove existing container if exists
                 if docker ps -a --format '{{.Names}}' | grep -q "^${container_name}$"; then
@@ -449,7 +485,7 @@ auto_install_module() {
                 fi
 
                 print_step "Starting container: $container_name"
-                if eval "$docker_cmd"; then
+                if docker "${docker_args[@]}"; then
                     print_success "Container $container_name started successfully"
 
                     # Create convenience wrapper script
@@ -457,7 +493,7 @@ auto_install_module() {
                     cat << WRAPPER | sudo tee "$wrapper_script" > /dev/null
 #!/bin/bash
 # OmniSet Docker wrapper for $module_id
-docker exec -it $container_name "\$@"
+docker exec -it "$container_name" "\$@"
 WRAPPER
                     sudo chmod +x "$wrapper_script"
 
@@ -480,7 +516,7 @@ WRAPPER
                 mkdir -p "$appimage_dir"
 
                 print_step "Downloading AppImage: $app_name"
-                if curl -fsSL -o "$appimage_path" "$url"; then
+                if curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 -o "$appimage_path" "$url"; then
                     chmod +x "$appimage_path"
 
                     # Create symlink
@@ -504,27 +540,35 @@ WRAPPER
                 bin_name=$(yq -r ".install_methods[$i].name // \"$module_id\"" "$manifest")
                 install_path=$(yq -r ".install_methods[$i].install_path // \"/usr/local/bin\"" "$manifest")
 
-                local temp_file="/tmp/${bin_name}"
+                local temp_file
+                temp_file=$(omniset_mktemp)
 
                 print_step "Downloading binary: $bin_name"
-                if curl -fsSL -o "$temp_file" "$url"; then
+                if curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 -o "$temp_file" "$url"; then
                     chmod +x "$temp_file"
 
                     # Handle archives
+                    local temp_extract_dir
                     case "$url" in
                         *.tar.gz|*.tgz)
-                            tar -xzf "$temp_file" -C /tmp
-                            local extracted=$(find /tmp -maxdepth 2 -name "$bin_name" -type f 2>/dev/null | head -1)
+                            temp_extract_dir=$(omniset_mktemp -d)
+                            tar -xzf "$temp_file" -C "$temp_extract_dir"
+                            local extracted
+                            extracted=$(find "$temp_extract_dir" -maxdepth 2 -name "$bin_name" -type f 2>/dev/null | head -1)
                             if [[ -n "$extracted" ]]; then
                                 sudo mv "$extracted" "$install_path/$bin_name"
                             fi
+                            rm -rf "$temp_extract_dir"
                             ;;
                         *.zip)
-                            unzip -o "$temp_file" -d /tmp
-                            local extracted=$(find /tmp -maxdepth 2 -name "$bin_name" -type f 2>/dev/null | head -1)
+                            temp_extract_dir=$(omniset_mktemp -d)
+                            unzip -o "$temp_file" -d "$temp_extract_dir"
+                            local extracted
+                            extracted=$(find "$temp_extract_dir" -maxdepth 2 -name "$bin_name" -type f 2>/dev/null | head -1)
                             if [[ -n "$extracted" ]]; then
                                 sudo mv "$extracted" "$install_path/$bin_name"
                             fi
+                            rm -rf "$temp_extract_dir"
                             ;;
                         *)
                             sudo mv "$temp_file" "$install_path/$bin_name"
@@ -533,6 +577,7 @@ WRAPPER
 
                     sudo chmod +x "$install_path/$bin_name"
                     print_success "Binary installed: $install_path/$bin_name"
+                    rm -f "$temp_file"
                     return 0
                 fi
                 rm -f "$temp_file"
@@ -545,8 +590,15 @@ WRAPPER
 
 # Install multiple modules
 install_modules() {
+    local parallel="${OMNISET_PARALLEL:-false}"
     local -a modules=("$@")
     local total=${#modules[@]}
+
+    if [[ "$parallel" == "true" && $total -gt 1 ]]; then
+        install_modules_parallel "${modules[@]}"
+        return $?
+    fi
+
     local current=0
 
     print_header "Installing ${total} modules"
@@ -568,6 +620,57 @@ install_modules() {
         return 1
     fi
 
+    return 0
+}
+
+# Install modules in parallel using background jobs
+install_modules_parallel() {
+    local -a modules=("$@")
+    local total=${#modules[@]}
+    local results_dir
+    results_dir=$(omniset_mktemp -d)
+    local -a pids=()
+
+    print_header "Installing ${total} modules (parallel)"
+
+    for module_id in "${modules[@]}"; do
+        (
+            if install_module "$module_id"; then
+                echo "ok" > "$results_dir/$module_id"
+            else
+                echo "fail" > "$results_dir/$module_id"
+            fi
+        ) &
+        pids+=($!)
+    done
+
+    # Wait for all jobs
+    for pid in "${pids[@]}"; do
+        wait "$pid" 2>/dev/null || true
+    done
+
+    # Collect results
+    for module_id in "${modules[@]}"; do
+        local result_file="$results_dir/$module_id"
+        if [[ -f "$result_file" ]] && [[ "$(cat "$result_file")" == "ok" ]]; then
+            INSTALLED_MODULES+=("$module_id")
+        else
+            FAILED_MODULES+=("$module_id")
+        fi
+    done
+
+    rm -rf "$results_dir"
+
+    # Summary
+    print_header "Installation Summary"
+    print_kv "Total" "$total"
+    print_kv "Installed" "${#INSTALLED_MODULES[@]}"
+    print_kv "Failed" "${#FAILED_MODULES[@]}"
+
+    if [[ ${#FAILED_MODULES[@]} -gt 0 ]]; then
+        print_warning "Failed modules: ${FAILED_MODULES[*]}"
+        return 1
+    fi
     return 0
 }
 
@@ -601,10 +704,12 @@ uninstall_module() {
     fi
 
     # Fallback: try to remove packages
-    local packages
-    packages=$(get_module_info "$module_id" "provides.packages" "")
-    if [[ -n "$packages" ]]; then
-        pkg_remove $packages
+    local -a rm_pkg_array=()
+    while IFS= read -r pkg; do
+        [[ -n "$pkg" ]] && rm_pkg_array+=("$pkg")
+    done < <(yq -r '.provides.packages[]? // empty' "$(get_module_dir "$module_id")/manifest.yaml" 2>/dev/null)
+    if [[ ${#rm_pkg_array[@]} -gt 0 ]]; then
+        pkg_remove "${rm_pkg_array[@]}"
     fi
 
     return 0

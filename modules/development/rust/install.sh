@@ -9,7 +9,11 @@ fi
 echo "Installing Rust via rustup..."
 
 # Install rustup
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+_installer=$(mktemp)
+curl --proto '=https' --tlsv1.2 -sSf --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 https://sh.rustup.rs -o "$_installer"
+chmod +x "$_installer"
+sh "$_installer" -y
+rm -f "$_installer"
 
 # Source cargo env
 source "$HOME/.cargo/env"

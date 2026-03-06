@@ -57,7 +57,7 @@ install_helix() {
     esac
 
     local version
-    version=$(curl -s "https://api.github.com/repos/helix-editor/helix/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+    version=$(curl -s --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "https://api.github.com/repos/helix-editor/helix/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 
     local url="https://github.com/helix-editor/helix/releases/download/${version}/helix-${version}-${arch_name}-linux.tar.xz"
 
