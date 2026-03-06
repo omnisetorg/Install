@@ -54,12 +54,16 @@ setup() {
     # Create a safe PATH that has essential commands but NOT python3
     local safe_bin="${TEST_TEMP_DIR}/safe_bin"
     mkdir -p "$safe_bin"
-    # Link only needed commands from /usr/bin (excluding python3)
-    for cmd in mktemp tput env cat grep sed; do
-        [[ -f "/usr/bin/${cmd}" ]] && ln -sf "/usr/bin/${cmd}" "${safe_bin}/${cmd}"
+    # Link only needed commands (excluding python3)
+    # Use 'which' to find each command regardless of distro layout
+    for cmd in bash mktemp tput env cat grep sed rm sleep kill chmod; do
+        local cmd_path
+        cmd_path=$(command -v "$cmd" 2>/dev/null) && ln -sf "$cmd_path" "${safe_bin}/${cmd}"
     done
 
-    run env PATH="${MOCK_BIN}:${safe_bin}:/bin" bash -c '
+    # PATH must contain ONLY safe_bin and MOCK_BIN — no /bin or /usr/bin
+    # On Ubuntu /bin → /usr/bin, so including /bin leaks python3
+    run env PATH="${MOCK_BIN}:${safe_bin}" bash -c '
         source "'"${OMNISET_LIB}/ui/colors.sh"'"
         source "'"${OMNISET_LIB}/ui/print.sh"'"
         omniset_mktemp() { mktemp -p "'"${TEST_TEMP_DIR}"'"; }

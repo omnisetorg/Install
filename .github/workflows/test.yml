@@ -1,11 +1,6 @@
 name: Tests
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-  schedule:
-    - cron: '0 3 * * 0'  # Weekly Sunday 3am UTC
   workflow_dispatch:
 
 jobs:
