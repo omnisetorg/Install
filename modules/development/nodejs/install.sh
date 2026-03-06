@@ -38,12 +38,11 @@ case "$VERSION" in
 esac
 
 # Install Node.js via NodeSource
-local installer
-installer=$(mktemp)
-curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "$SETUP_URL" -o "$installer"
-chmod +x "$installer"
-sudo -E bash "$installer"
-rm -f "$installer"
+_installer=$(mktemp)
+curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 "$SETUP_URL" -o "$_installer"
+chmod +x "$_installer"
+sudo -E bash "$_installer"
+rm -f "$_installer"
 sudo apt-get install -y nodejs
 
 # Verify installation

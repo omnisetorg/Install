@@ -13,7 +13,7 @@
           "name": "System Essentials",
           "description": "Core packages: build-essential, curl, wget, git, vim, htop, unzip",
           "version": "1.0.0",
-          "size_mb": 100,
+          "size_mb": 350,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["essential", "base", "core"],
           "recommended": true
@@ -54,6 +54,24 @@
           "size_mb": 20,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["git", "tui"]
+        },
+        {
+          "id": "github-cli",
+          "name": "GitHub CLI",
+          "description": "GitHub's official command-line tool",
+          "version": "2.63",
+          "size_mb": 30,
+          "arch": ["amd64", "arm64"],
+          "tags": ["github", "git", "cli"]
+        },
+        {
+          "id": "zsh-setup",
+          "name": "Zsh + Oh My Zsh",
+          "description": "Zsh shell with Oh My Zsh and popular plugins",
+          "version": "1.0",
+          "size_mb": 30,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["shell", "zsh", "productivity"]
         }
       ]
     },
@@ -77,7 +95,7 @@
           "name": "Kitty",
           "description": "Fast, feature-rich terminal",
           "version": "0.37",
-          "size_mb": 40,
+          "size_mb": 100,
           "arch": ["amd64", "arm64"],
           "tags": ["terminal", "gpu"]
         },
@@ -86,7 +104,7 @@
           "name": "WezTerm",
           "description": "GPU-accelerated terminal with multiplexing",
           "version": "20240203",
-          "size_mb": 80,
+          "size_mb": 200,
           "arch": ["amd64", "arm64"],
           "tags": ["terminal", "gpu", "multiplexer"]
         },
@@ -112,7 +130,7 @@
           "name": "VS Code",
           "description": "Popular code editor by Microsoft",
           "version": "1.96",
-          "size_mb": 200,
+          "size_mb": 400,
           "arch": ["amd64", "arm64"],
           "tags": ["editor", "ide", "popular"]
         },
@@ -121,7 +139,7 @@
           "name": "Cursor",
           "description": "AI-powered code editor (VS Code fork)",
           "version": "0.44",
-          "size_mb": 250,
+          "size_mb": 350,
           "arch": ["amd64", "arm64"],
           "tags": ["editor", "ai", "popular"]
         },
@@ -174,7 +192,7 @@
           "name": "Google Chrome",
           "description": "Fast browser by Google",
           "version": "131",
-          "size_mb": 150,
+          "size_mb": 350,
           "arch": ["amd64"],
           "tags": ["browser", "google"]
         },
@@ -183,7 +201,7 @@
           "name": "Firefox",
           "description": "Privacy-focused browser by Mozilla",
           "version": "134",
-          "size_mb": 100,
+          "size_mb": 280,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["browser", "mozilla", "privacy"]
         },
@@ -192,9 +210,18 @@
           "name": "Brave",
           "description": "Privacy browser with ad blocking",
           "version": "1.73",
-          "size_mb": 150,
+          "size_mb": 350,
           "arch": ["amd64", "arm64"],
           "tags": ["browser", "privacy", "crypto"]
+        },
+        {
+          "id": "vivaldi",
+          "name": "Vivaldi",
+          "description": "Feature-rich browser for power users",
+          "version": "7.0",
+          "size_mb": 350,
+          "arch": ["amd64", "arm64"],
+          "tags": ["browser", "customizable"]
         }
       ]
     },
@@ -207,7 +234,7 @@
         {
           "id": "docker",
           "name": "Docker",
-          "description": "Container platform for applications",
+          "description": "Container platform (engine + CLI + containerd + compose ~500 MB)",
           "version": "27.4",
           "size_mb": 500,
           "arch": ["amd64", "arm64", "armhf"],
@@ -236,7 +263,7 @@
           "name": "Go",
           "description": "Go programming language",
           "version": "1.23",
-          "size_mb": 200,
+          "size_mb": 430,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["golang", "runtime"]
         },
@@ -245,7 +272,7 @@
           "name": "Rust",
           "description": "Rust programming language via rustup",
           "version": "1.84",
-          "size_mb": 300,
+          "size_mb": 1200,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["rust", "runtime"]
         },
@@ -254,7 +281,7 @@
           "name": "PHP",
           "description": "PHP 8.4 with extensions and Composer",
           "version": "8.4",
-          "size_mb": 150,
+          "size_mb": 200,
           "arch": ["amd64", "arm64"],
           "tags": ["php", "runtime", "web"]
         },
@@ -263,7 +290,7 @@
           "name": "Java (OpenJDK)",
           "description": "Java 21 LTS via SDKMAN",
           "version": "21",
-          "size_mb": 300,
+          "size_mb": 350,
           "arch": ["amd64", "arm64"],
           "tags": ["java", "runtime", "jvm"]
         },
@@ -272,9 +299,27 @@
           "name": ".NET SDK",
           "description": ".NET 9 SDK for C#/F# development",
           "version": "9.0",
-          "size_mb": 400,
+          "size_mb": 475,
           "arch": ["amd64", "arm64"],
           "tags": ["dotnet", "csharp", "runtime"]
+        },
+        {
+          "id": "ruby",
+          "name": "Ruby",
+          "description": "Ruby programming language with Bundler",
+          "version": "3.3",
+          "size_mb": 250,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["ruby", "runtime"]
+        },
+        {
+          "id": "flutter",
+          "name": "Flutter",
+          "description": "Google's UI toolkit for mobile/web/desktop",
+          "version": "3.27",
+          "size_mb": 1700,
+          "arch": ["amd64", "arm64"],
+          "tags": ["dart", "mobile", "ui"]
         }
       ]
     },
@@ -289,7 +334,7 @@
           "name": "Postman",
           "description": "API development and testing platform",
           "version": "11",
-          "size_mb": 200,
+          "size_mb": 350,
           "arch": ["amd64", "arm64"],
           "tags": ["api", "testing", "rest"]
         },
@@ -298,7 +343,7 @@
           "name": "DBeaver",
           "description": "Universal database GUI tool",
           "version": "24.3",
-          "size_mb": 200,
+          "size_mb": 400,
           "arch": ["amd64", "arm64"],
           "tags": ["database", "gui", "sql"]
         },
@@ -307,9 +352,27 @@
           "name": "Insomnia",
           "description": "Open-source API client",
           "version": "10",
-          "size_mb": 150,
+          "size_mb": 550,
           "arch": ["amd64", "arm64"],
           "tags": ["api", "rest", "graphql"]
+        },
+        {
+          "id": "gitkraken",
+          "name": "GitKraken",
+          "description": "Visual Git client with built-in merge tool",
+          "version": "10.5",
+          "size_mb": 450,
+          "arch": ["amd64", "arm64"],
+          "tags": ["git", "gui"]
+        },
+        {
+          "id": "ngrok",
+          "name": "ngrok",
+          "description": "Expose local servers to the internet",
+          "version": "3.18",
+          "size_mb": 25,
+          "arch": ["amd64", "arm64"],
+          "tags": ["tunneling", "networking"]
         }
       ]
     },
@@ -351,7 +414,7 @@
           "name": "Ansible",
           "description": "IT automation platform",
           "version": "10",
-          "size_mb": 100,
+          "size_mb": 300,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["automation", "config"]
         },
@@ -372,6 +435,25 @@
           "size_mb": 10,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["vpn", "networking"]
+        },
+        {
+          "id": "nginx",
+          "name": "Nginx",
+          "description": "Web server and reverse proxy (Docker image ~190 MB, +Docker ~500 MB)",
+          "version": "1.27",
+          "size_mb": 190,
+          "arch": ["amd64", "arm64"],
+          "tags": ["webserver", "proxy"],
+          "requires": ["docker"]
+        },
+        {
+          "id": "awscli",
+          "name": "AWS CLI",
+          "description": "Amazon Web Services command-line interface",
+          "version": "2.22",
+          "size_mb": 200,
+          "arch": ["amd64", "arm64"],
+          "tags": ["aws", "cloud"]
         }
       ]
     },
@@ -384,9 +466,9 @@
         {
           "id": "postgresql",
           "name": "PostgreSQL",
-          "description": "Advanced database (Docker)",
+          "description": "Advanced relational database (Docker image ~430 MB, +Docker ~500 MB)",
           "version": "17",
-          "size_mb": 200,
+          "size_mb": 430,
           "arch": ["amd64", "arm64"],
           "tags": ["sql", "database"],
           "requires": ["docker"]
@@ -394,9 +476,9 @@
         {
           "id": "mysql",
           "name": "MySQL",
-          "description": "Popular relational database (Docker)",
+          "description": "Popular relational database (Docker image ~620 MB, +Docker ~500 MB)",
           "version": "9.1",
-          "size_mb": 200,
+          "size_mb": 620,
           "arch": ["amd64", "arm64"],
           "tags": ["sql", "database"],
           "requires": ["docker"]
@@ -404,9 +486,9 @@
         {
           "id": "mariadb",
           "name": "MariaDB",
-          "description": "MySQL-compatible database (Docker)",
+          "description": "MySQL-compatible database (Docker image ~400 MB, +Docker ~500 MB)",
           "version": "11.6",
-          "size_mb": 200,
+          "size_mb": 400,
           "arch": ["amd64", "arm64"],
           "tags": ["sql", "database"],
           "requires": ["docker"]
@@ -414,9 +496,9 @@
         {
           "id": "redis",
           "name": "Redis",
-          "description": "In-memory data store (Docker)",
+          "description": "In-memory data store (Docker image ~130 MB, +Docker ~500 MB)",
           "version": "7.4",
-          "size_mb": 50,
+          "size_mb": 130,
           "arch": ["amd64", "arm64"],
           "tags": ["cache", "database"],
           "requires": ["docker"]
@@ -424,9 +506,9 @@
         {
           "id": "valkey",
           "name": "Valkey",
-          "description": "Open-source Redis fork (Docker)",
+          "description": "Open-source Redis fork (Docker image ~130 MB, +Docker ~500 MB)",
           "version": "8.0",
-          "size_mb": 50,
+          "size_mb": 130,
           "arch": ["amd64", "arm64"],
           "tags": ["cache", "database", "opensource"],
           "requires": ["docker"]
@@ -434,9 +516,9 @@
         {
           "id": "mongodb",
           "name": "MongoDB",
-          "description": "Document database (Docker)",
+          "description": "Document database (Docker image ~750 MB, +Docker ~500 MB)",
           "version": "8.0",
-          "size_mb": 300,
+          "size_mb": 750,
           "arch": ["amd64", "arm64"],
           "tags": ["nosql", "database"],
           "requires": ["docker"]
@@ -463,7 +545,7 @@
           "name": "Discord",
           "description": "Voice, video, and text chat",
           "version": "0.0.75",
-          "size_mb": 100,
+          "size_mb": 265,
           "arch": ["amd64"],
           "tags": ["chat", "voice", "gaming"]
         },
@@ -472,7 +554,7 @@
           "name": "Slack",
           "description": "Team collaboration platform",
           "version": "4.41",
-          "size_mb": 150,
+          "size_mb": 250,
           "arch": ["amd64", "arm64"],
           "tags": ["chat", "work"]
         },
@@ -481,7 +563,7 @@
           "name": "Zoom",
           "description": "Video conferencing",
           "version": "6.3",
-          "size_mb": 200,
+          "size_mb": 450,
           "arch": ["amd64"],
           "tags": ["video", "meetings"]
         },
@@ -499,7 +581,7 @@
           "name": "Signal",
           "description": "Private encrypted messenger",
           "version": "7.36",
-          "size_mb": 150,
+          "size_mb": 440,
           "arch": ["amd64"],
           "tags": ["chat", "privacy", "encrypted"]
         },
@@ -508,9 +590,27 @@
           "name": "Thunderbird",
           "description": "Email client by Mozilla",
           "version": "128",
-          "size_mb": 100,
+          "size_mb": 500,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["email", "mozilla"]
+        },
+        {
+          "id": "teams",
+          "name": "Teams for Linux",
+          "description": "Microsoft Teams client (community)",
+          "version": "1.5",
+          "size_mb": 300,
+          "arch": ["amd64"],
+          "tags": ["chat", "video", "work"]
+        },
+        {
+          "id": "element",
+          "name": "Element",
+          "description": "Matrix chat client for decentralized messaging",
+          "version": "1.11",
+          "size_mb": 230,
+          "arch": ["amd64", "arm64"],
+          "tags": ["chat", "matrix", "privacy"]
         }
       ]
     },
@@ -525,7 +625,7 @@
           "name": "LibreOffice",
           "description": "Full office suite",
           "version": "24.8",
-          "size_mb": 500,
+          "size_mb": 850,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["office", "documents"]
         },
@@ -534,7 +634,7 @@
           "name": "Obsidian",
           "description": "Knowledge base and note-taking",
           "version": "1.7",
-          "size_mb": 150,
+          "size_mb": 300,
           "arch": ["amd64", "arm64"],
           "tags": ["notes", "markdown", "knowledge"]
         },
@@ -543,7 +643,7 @@
           "name": "Notion",
           "description": "All-in-one workspace",
           "version": "4.2",
-          "size_mb": 150,
+          "size_mb": 300,
           "arch": ["amd64", "arm64"],
           "tags": ["notes", "workspace", "wiki"]
         },
@@ -552,9 +652,27 @@
           "name": "Bitwarden",
           "description": "Open-source password manager",
           "version": "2024.12",
-          "size_mb": 100,
+          "size_mb": 300,
           "arch": ["amd64"],
           "tags": ["passwords", "security"]
+        },
+        {
+          "id": "flameshot",
+          "name": "Flameshot",
+          "description": "Powerful screenshot tool with annotation",
+          "version": "12.1",
+          "size_mb": 50,
+          "arch": ["amd64", "arm64"],
+          "tags": ["screenshot", "utility"]
+        },
+        {
+          "id": "keepassxc",
+          "name": "KeePassXC",
+          "description": "Offline password manager with KeePass support",
+          "version": "2.7",
+          "size_mb": 120,
+          "arch": ["amd64", "arm64"],
+          "tags": ["passwords", "security", "offline"]
         }
       ]
     },
@@ -569,7 +687,7 @@
           "name": "GIMP",
           "description": "Image editor (Photoshop alternative)",
           "version": "2.10",
-          "size_mb": 150,
+          "size_mb": 200,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["images", "design"]
         },
@@ -578,7 +696,7 @@
           "name": "Inkscape",
           "description": "Vector graphics editor",
           "version": "1.4",
-          "size_mb": 100,
+          "size_mb": 400,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["vector", "design"]
         },
@@ -587,7 +705,7 @@
           "name": "Figma",
           "description": "Collaborative design tool (unofficial)",
           "version": "124",
-          "size_mb": 150,
+          "size_mb": 300,
           "arch": ["amd64"],
           "tags": ["design", "ui", "collaboration"]
         },
@@ -596,7 +714,7 @@
           "name": "Blender",
           "description": "3D creation suite",
           "version": "4.3",
-          "size_mb": 500,
+          "size_mb": 700,
           "arch": ["amd64", "arm64"],
           "tags": ["3d", "modeling", "animation"]
         },
@@ -614,7 +732,7 @@
           "name": "Kdenlive",
           "description": "Video editor by KDE",
           "version": "24.12",
-          "size_mb": 300,
+          "size_mb": 600,
           "arch": ["amd64", "arm64"],
           "tags": ["video", "editing"]
         },
@@ -623,9 +741,27 @@
           "name": "Audacity",
           "description": "Audio editor and recorder",
           "version": "3.7",
-          "size_mb": 80,
+          "size_mb": 100,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["audio", "recording"]
+        },
+        {
+          "id": "krita",
+          "name": "Krita",
+          "description": "Digital painting and illustration",
+          "version": "5.2",
+          "size_mb": 500,
+          "arch": ["amd64", "arm64"],
+          "tags": ["painting", "art", "design"]
+        },
+        {
+          "id": "shotcut",
+          "name": "Shotcut",
+          "description": "Free cross-platform video editor",
+          "version": "24.11",
+          "size_mb": 350,
+          "arch": ["amd64", "arm64"],
+          "tags": ["video", "editing"]
         }
       ]
     },
@@ -640,7 +776,7 @@
           "name": "VLC",
           "description": "Universal media player",
           "version": "3.0.21",
-          "size_mb": 50,
+          "size_mb": 250,
           "arch": ["amd64", "arm64", "armhf"],
           "tags": ["player", "video", "audio"]
         },
@@ -649,9 +785,36 @@
           "name": "Spotify",
           "description": "Music streaming client",
           "version": "1.2",
-          "size_mb": 150,
+          "size_mb": 300,
           "arch": ["amd64"],
           "tags": ["music", "streaming"]
+        },
+        {
+          "id": "mpv",
+          "name": "mpv",
+          "description": "Lightweight and powerful media player",
+          "version": "0.39",
+          "size_mb": 100,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["player", "video", "audio"]
+        },
+        {
+          "id": "stremio",
+          "name": "Stremio",
+          "description": "Media center for streaming",
+          "version": "4.4",
+          "size_mb": 100,
+          "arch": ["amd64"],
+          "tags": ["streaming", "media"]
+        },
+        {
+          "id": "transmission",
+          "name": "Transmission",
+          "description": "Lightweight and fast BitTorrent client",
+          "version": "4.0",
+          "size_mb": 20,
+          "arch": ["amd64", "arm64", "armhf"],
+          "tags": ["torrent", "download", "bittorrent"]
         }
       ]
     },
@@ -675,7 +838,7 @@
           "name": "Lutris",
           "description": "Open gaming platform for Linux",
           "version": "0.5.18",
-          "size_mb": 100,
+          "size_mb": 200,
           "arch": ["amd64"],
           "tags": ["gaming", "wine"]
         }
@@ -692,7 +855,7 @@
           "name": "VirtualBox",
           "description": "Virtual machine manager",
           "version": "7.1",
-          "size_mb": 200,
+          "size_mb": 300,
           "arch": ["amd64"],
           "tags": ["virtualization"]
         },
@@ -710,9 +873,18 @@
           "name": "qBittorrent",
           "description": "BitTorrent client",
           "version": "5.0",
-          "size_mb": 50,
+          "size_mb": 120,
           "arch": ["amd64", "arm64"],
           "tags": ["torrent", "download"]
+        },
+        {
+          "id": "timeshift",
+          "name": "Timeshift",
+          "description": "System backup and restore utility",
+          "version": "24.06",
+          "size_mb": 50,
+          "arch": ["amd64", "arm64"],
+          "tags": ["backup", "restore", "system"]
         }
       ]
     }
@@ -723,7 +895,7 @@
       "name": "Web Developer",
       "description": "Full-stack web development setup",
       "icon": "code",
-      "modules": ["essentials", "modern-cli", "vscode", "docker", "nodejs", "chrome", "postman"]
+      "modules": ["essentials", "modern-cli", "vscode", "docker", "nodejs", "chrome", "postman", "github-cli"]
     },
     {
       "id": "php-developer",
@@ -744,7 +916,7 @@
       "name": "DevOps Engineer",
       "description": "Infrastructure and containers",
       "icon": "server",
-      "modules": ["essentials", "modern-cli", "vscode", "docker", "kubernetes", "terraform", "ansible", "tailscale"]
+      "modules": ["essentials", "modern-cli", "vscode", "docker", "kubernetes", "terraform", "ansible", "tailscale", "nginx", "awscli"]
     },
     {
       "id": "content-creator",
@@ -772,7 +944,14 @@
       "name": "Power User",
       "description": "Modern terminal-first workflow",
       "icon": "zap",
-      "modules": ["essentials", "modern-cli", "neovim", "lazygit", "ghostty", "docker"]
+      "modules": ["essentials", "modern-cli", "neovim", "lazygit", "ghostty", "docker", "github-cli", "zsh-setup"]
+    },
+    {
+      "id": "casual-user",
+      "name": "Casual User",
+      "description": "Everyday apps for browsing, media, and productivity",
+      "icon": "user",
+      "modules": ["essentials", "chrome", "vlc", "flameshot", "bitwarden", "discord", "spotify"]
     }
   ]
 }

@@ -33,7 +33,12 @@ const ModuleIcons = [
     // System
     'virtualbox', 'syncthing', 'qbittorrent',
     // Misc
-    'git', 'tmux'
+    'git', 'tmux',
+    // New modules
+    'github-cli', 'zsh-setup', 'vivaldi', 'ruby', 'flutter',
+    'gitkraken', 'ngrok', 'nginx', 'awscli', 'teams', 'element',
+    'flameshot', 'keepassxc', 'krita', 'shotcut', 'mpv', 'stremio', 'timeshift',
+    'transmission'
 ];
 
 // Get icon URL for a module
@@ -152,6 +157,7 @@ function getFallbackEmoji(moduleId) {
         virtualbox: '📦',
         syncthing: '🔄',
         qbittorrent: '⬇️',
+        transmission: '⬇️',
         // Misc
         git: '🔀',
         tmux: '📟'

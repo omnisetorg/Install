@@ -9,8 +9,8 @@
     --bg-hover: #f1f5f9;
 
     --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-muted: #94a3b8;
+    --text-secondary: #1e293b;
+    --text-muted: #334155;
 
     --border-color: #e2e8f0;
     --border-radius: 16px;
@@ -41,25 +41,25 @@
 
 /* Dark Theme */
 [data-theme="dark"] {
-    --bg-body: #0f172a;
-    --bg-primary: #1e293b;
-    --bg-secondary: #334155;
-    --bg-tertiary: #475569;
-    --bg-hover: #334155;
+    --bg-body: #1a1b2e;
+    --bg-primary: #242538;
+    --bg-secondary: #2d2e42;
+    --bg-tertiary: #3a3b52;
+    --bg-hover: #2d2e42;
 
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #64748b;
+    --text-primary: #f0f0f5;
+    --text-secondary: #c4c5d6;
+    --text-muted: #8b8da0;
 
-    --border-color: #334155;
+    --border-color: #35364a;
 
     --accent-light: rgba(99, 102, 241, 0.15);
     --accent-glow: rgba(99, 102, 241, 0.2);
 
     --success-light: rgba(16, 185, 129, 0.15);
 
-    --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.4);
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.25);
 }
 
 /* Reset */
@@ -104,7 +104,7 @@ body {
 }
 
 [data-theme="dark"] .header {
-    background: rgba(30, 41, 59, 0.9);
+    background: rgba(36, 37, 56, 0.92);
 }
 
 .header-content {
@@ -124,14 +124,14 @@ body {
 }
 
 .logo {
-    font-size: 36px;
-    line-height: 1;
+    width: 40px;
+    height: 40px;
 }
 
 .brand-text h1 {
     font-size: 24px;
     font-weight: 700;
-    background: linear-gradient(135deg, var(--accent), #a855f7);
+    background: linear-gradient(135deg, #ff8c00, #e04520);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -512,7 +512,7 @@ body {
 }
 
 [data-theme="dark"] .footer {
-    background: rgba(30, 41, 59, 0.95);
+    background: rgba(36, 37, 56, 0.95);
 }
 
 .footer-content {

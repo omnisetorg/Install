@@ -82,7 +82,9 @@ list_modules() {
         esac
     done
 
-    [[ "$format" == "json" ]] && echo "]"
+    if [[ "$format" == "json" ]]; then
+        echo "]"
+    fi
 }
 
 # ═══════════════════════════════════════════════════════════════
@@ -466,7 +468,7 @@ auto_install_module() {
                         local env_key="${line%%=*}"
                         local env_value="${line#*=}"
                         if [[ "$env_value" == "__GENERATE__" ]]; then
-                            env_value=$(head -c 16 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 16)
+                            env_value=$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 16)
                             print_info "Generated password for $env_key: $env_value"
                         fi
                         docker_args+=("-e" "${env_key}=${env_value}")

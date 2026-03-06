@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    - cron: '0 3 * * 0'  # Weekly Sunday 3am UTC
+  workflow_dispatch:
 
 jobs:
   test:
@@ -27,5 +30,34 @@ jobs:
           sudo wget -qO /usr/local/bin/yq "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${YQ_ARCH}"
           sudo chmod +x /usr/local/bin/yq
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Run tests
         run: cd tests && make test
+
+  e2e:
+    runs-on: ${{ matrix.runner }}
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Run e2e install tests
+        run: cd tests && make test-e2e
+      - name: Run e2e uninstall tests
+        run: cd tests && make test-e2e-uninstall
+      - name: Run e2e idempotency tests
+        run: cd tests && make test-e2e-idempotency
+      - name: Run e2e conflict tests
+        run: cd tests && make test-e2e-conflicts
+      - name: Run e2e doctor tests
+        run: cd tests && make test-e2e-doctor

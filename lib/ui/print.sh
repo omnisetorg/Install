@@ -5,7 +5,7 @@
 set -euo pipefail
 
 # Ensure colors are initialized
-[[ -z "$NC" ]] && source "${OMNISET_LIB}/ui/colors.sh" && init_ui
+[[ -z "${NC:-}" ]] && source "${OMNISET_LIB:-}/ui/colors.sh" && init_ui
 
 # ═══════════════════════════════════════════════════════════════
 # Basic Print Functions

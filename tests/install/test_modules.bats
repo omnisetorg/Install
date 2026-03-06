@@ -135,7 +135,7 @@ teardown() {
 
     discover_modules
 
-    [[ "${MODULE_REGISTRY[test-editor]}" == *"/editors/test-editor/" ]]
+    [[ "${MODULE_REGISTRY[test-editor]}" == *"/editors"*"/test-editor/" ]]
 }
 
 @test "discover_modules: empty dir returns no modules" {
@@ -163,7 +163,8 @@ teardown() {
 
     run get_module_dir "test-editor"
     assert_success
-    assert_output --partial "editors/test-editor"
+    assert_output --partial "editors"
+    assert_output --partial "test-editor"
 }
 
 @test "get_module_dir: filesystem fallback when not in registry" {

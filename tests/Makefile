@@ -1,7 +1,7 @@
 BATS := ./bats/bats-core/bin/bats
 BATS_FLAGS := --print-output-on-failure --timing
 
-.PHONY: test test-unit test-integration test-p0 test-p1 test-p2 test-p3 setup-bats
+.PHONY: test test-unit test-integration test-e2e test-e2e-uninstall test-e2e-idempotency test-e2e-conflicts test-e2e-doctor test-e2e-all test-p0 test-p1 test-p2 test-p3 test-web test-modules setup-bats
 
 setup-bats:
 	git submodule update --init --recursive ../tests/bats/bats-core
@@ -12,7 +12,7 @@ setup-bats:
 test: test-unit test-integration
 
 test-unit:
-	$(BATS) $(BATS_FLAGS) core/ ui/ system/ install/ cli/
+	$(BATS) $(BATS_FLAGS) core/ ui/ system/ install/ cli/ web/ modules/
 
 test-integration:
 	$(BATS) $(BATS_FLAGS) integration/
@@ -43,3 +43,26 @@ test-install:
 
 test-cli:
 	$(BATS) $(BATS_FLAGS) cli/
+
+test-web:
+	$(BATS) $(BATS_FLAGS) web/
+
+test-modules:
+	$(BATS) $(BATS_FLAGS) modules/
+
+test-e2e:
+	cd e2e && ./run-e2e.sh
+
+test-e2e-uninstall:
+	cd e2e && ./run-uninstall.sh
+
+test-e2e-idempotency:
+	cd e2e && ./run-idempotency.sh
+
+test-e2e-conflicts:
+	cd e2e && ./run-conflicts.sh
+
+test-e2e-doctor:
+	cd e2e && ./run-doctor.sh
+
+test-e2e-all: test-e2e test-e2e-uninstall test-e2e-idempotency test-e2e-conflicts test-e2e-doctor

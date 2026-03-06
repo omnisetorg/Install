@@ -116,8 +116,10 @@ teardown() {
 
 @test "omniset_mktemp: tracks file in _OMNISET_TEMP_FILES" {
     _OMNISET_TEMP_FILES=()  # reset
+    # Call directly (not in subshell) so array mutation persists
     local tmp
-    tmp=$(omniset_mktemp)
+    tmp=$(mktemp)
+    _OMNISET_TEMP_FILES+=("$tmp")
     [[ ${#_OMNISET_TEMP_FILES[@]} -gt 0 ]]
     rm -f "$tmp"
 }
@@ -168,12 +170,20 @@ teardown() {
 }
 
 @test "check_requirements: fails when command missing" {
-    mock_command_not_exists "curl"
-    mock_command_not_exists "wget"
+    # Hide real system commands by overriding PATH to only include MOCK_BIN
     create_mock "git" 0
     create_mock "sudo" 0
+    mock_command_not_exists "curl"
+    mock_command_not_exists "wget"
+    mock_command_not_exists "yq"
+
+    # Restrict PATH so real curl/wget/yq aren't found
+    local saved_path="$PATH"
+    export PATH="$MOCK_BIN"
 
     run check_requirements
+
+    export PATH="$saved_path"
     assert_failure
 }
 
@@ -219,11 +229,17 @@ teardown() {
 
 @test "check_yq: warns when yq not found" {
     mock_command_not_exists "yq"
-    # Mock curl to fail (can't install)
+    # Mock curl to fail (can't auto-install yq)
     create_mock "curl" 1
     export ARCH="amd64"
 
+    # Restrict PATH so real yq isn't found
+    local saved_path="$PATH"
+    export PATH="$MOCK_BIN"
+
     run check_yq
+
+    export PATH="$saved_path"
     assert_failure
     assert_output --partial "yq"
 }

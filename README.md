@@ -136,6 +136,28 @@ install_methods:
 
 Modules prefer apt/deb packages. Flatpak/Snap used only as fallback.
 
+## Testing
+
+OmniSet has three tiers of tests:
+
+- **Unit tests** (214 tests) — validate library functions with mocks
+- **Integration tests** — validate all module manifests and structure
+- **E2E tests** — install modules in Docker containers, verify binaries work
+  - Install verification — binaries exist and run
+  - Uninstall verification — binaries removed cleanly
+  - Idempotency — double install causes no errors
+  - Conflict testing — overlapping modules coexist
+  - Doctor validation — `omniset doctor` works after installs
+
+```bash
+cd tests
+make test          # Unit + integration (~30s)
+make test-e2e      # E2E install tests in Docker
+make test-e2e-all  # All E2E suites (~30min)
+```
+
+See [tests/README.md](tests/README.md) for details.
+
 ## Acknowledgments
 
 OmniSet is inspired by:
