@@ -30,6 +30,10 @@ MODULES=(
     "editors/neovim        | nvim --version                                   | ! command -v nvim"
     "editors/helix         | hx --version                                     | ! command -v hx"
     "devops/ansible        | ansible --version                                | ! command -v ansible"
+    "devops/awscli         | aws --version                                    | ! command -v aws"
+    "cli/github-cli        | gh --version                                     | ! command -v gh"
+    "cli/modern-cli        | fzf --version && rg --version && bat --version   | ! command -v fzf && ! command -v rg"
+    "development/ruby      | ruby --version && gem --version                  | ! command -v ruby"
 )
 
 passed=0

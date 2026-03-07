@@ -8,38 +8,14 @@ set -euo pipefail
 # Package Removal Functions
 # ═══════════════════════════════════════════════════════════════
 
-# Remove package via all package managers
+# Remove package via the detected package manager (uses PKG_REMOVE from packages.sh)
 remove_package() {
     local package="$1"
 
-    # APT (Debian/Ubuntu)
-    if command -v apt-get &>/dev/null; then
-        sudo apt-get remove -y "$package" 2>/dev/null || true
-    fi
-
-    # DNF (Fedora)
-    if command -v dnf &>/dev/null; then
-        sudo dnf remove -y "$package" 2>/dev/null || true
-    fi
-
-    # YUM (RHEL/CentOS)
-    if command -v yum &>/dev/null && ! command -v dnf &>/dev/null; then
-        sudo yum remove -y "$package" 2>/dev/null || true
-    fi
-
-    # Pacman (Arch)
-    if command -v pacman &>/dev/null; then
-        sudo pacman -Rs --noconfirm "$package" 2>/dev/null || true
-    fi
-
-    # Zypper (openSUSE)
-    if command -v zypper &>/dev/null; then
-        sudo zypper remove -y "$package" 2>/dev/null || true
-    fi
-
-    # APK (Alpine)
-    if command -v apk &>/dev/null; then
-        sudo apk del "$package" 2>/dev/null || true
+    if [[ -n "${PKG_REMOVE:-}" ]]; then
+        $PKG_REMOVE "$package" 2>/dev/null || true
+    else
+        print_warning "No package manager detected, cannot remove: $package"
     fi
 }
 
@@ -85,19 +61,13 @@ remove_docker() {
 # Cleanup Functions
 # ═══════════════════════════════════════════════════════════════
 
-# Clean orphaned packages
+# Clean orphaned packages (uses PKG_AUTOREMOVE from packages.sh)
 cleanup_orphans() {
-    if command -v apt-get &>/dev/null; then
-        sudo apt-get autoremove -y 2>/dev/null || true
-        sudo apt-get autoclean 2>/dev/null || true
+    if [[ -n "${PKG_AUTOREMOVE:-}" ]]; then
+        eval "$PKG_AUTOREMOVE" 2>/dev/null || true
     fi
-
-    if command -v dnf &>/dev/null; then
-        sudo dnf autoremove -y 2>/dev/null || true
-    fi
-
-    if command -v pacman &>/dev/null; then
-        sudo pacman -Qdtq | sudo pacman -Rs --noconfirm - 2>/dev/null || true
+    if [[ -n "${PKG_CLEAN:-}" ]]; then
+        eval "$PKG_CLEAN" 2>/dev/null || true
     fi
 }
 

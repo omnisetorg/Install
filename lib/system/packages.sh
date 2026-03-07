@@ -361,7 +361,7 @@ install_cargo() {
     if ! command -v cargo &>/dev/null; then
         print_info "Installing Rust toolchain..."
         local installer
-        installer=$(mktemp)
+        installer=$(omniset_mktemp --suffix=.sh)
         curl --proto '=https' --tlsv1.2 -sSf --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 https://sh.rustup.rs -o "$installer"
         chmod +x "$installer"
         sh "$installer" -y

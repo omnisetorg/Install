@@ -39,8 +39,6 @@ list_modules() {
     local format="${1:-table}"
     local filter_category="${2:-}"
 
-    discover_modules
-
     case "$format" in
         table)
             printf "%-20s %-15s %-40s %s\n" "MODULE" "CATEGORY" "DESCRIPTION" "SIZE"
@@ -74,7 +72,11 @@ list_modules() {
             json)
                 [[ "$first" != "true" ]] && echo ","
                 first=false
-                echo "  {\"id\": \"$module_id\", \"name\": \"$name\", \"category\": \"$category\", \"description\": \"$description\", \"size_mb\": $size}"
+                # Escape double quotes and backslashes for valid JSON
+                local j_name="${name//\\/\\\\}" j_desc="${description//\\/\\\\}"
+                j_name="${j_name//\"/\\\"}"
+                j_desc="${j_desc//\"/\\\"}"
+                echo "  {\"id\": \"$module_id\", \"name\": \"$j_name\", \"category\": \"$category\", \"description\": \"$j_desc\", \"size_mb\": $size}"
                 ;;
             simple)
                 echo "$module_id"
@@ -164,6 +166,12 @@ module_supports_arch() {
 # Check if module is installed
 is_module_installed() {
     local module_id="$1"
+
+    # Check by state record
+    if state_is_installed "$module_id"; then
+        return 0
+    fi
+
     local module_dir
     module_dir=$(get_module_dir "$module_id") || return 1
 
@@ -203,8 +211,7 @@ install_module() {
     local options="${3:-}"
 
     local module_dir
-    module_dir=$(get_module_dir "$module_id")
-    if [[ $? -ne 0 ]]; then
+    if ! module_dir=$(get_module_dir "$module_id"); then
         print_error "Module not found: $module_id"
         FAILED_MODULES+=("$module_id")
         return 1
@@ -261,6 +268,9 @@ install_module() {
         if bash "$install_script" "$ARCH" "$options"; then
             print_success "$display_name installed successfully"
             INSTALLED_MODULES+=("$module_id")
+            local category
+            category=$(yq -r '.category // "unknown"' "$manifest" 2>/dev/null || echo "unknown")
+            state_record_install "$module_id" "$category" "$display_name" "script"
             return 0
         else
             print_error "Failed to install $display_name"
@@ -270,9 +280,13 @@ install_module() {
     fi
 
     # Auto-install based on manifest
+    _LAST_INSTALL_METHOD=""
     if auto_install_module "$module_id" "$manifest"; then
         print_success "$display_name installed successfully"
         INSTALLED_MODULES+=("$module_id")
+        local category
+        category=$(yq -r '.category // "unknown"' "$manifest" 2>/dev/null || echo "unknown")
+        state_record_install "$module_id" "$category" "$display_name" "${_LAST_INSTALL_METHOD:-auto}"
         return 0
     else
         print_error "Failed to install $display_name"
@@ -309,6 +323,7 @@ auto_install_module() {
                     [[ -n "$pkg" ]] && pkg_array+=("$pkg")
                 done < <(yq -r ".install_methods[$i].packages[]" "$manifest" 2>/dev/null)
                 if [[ ${#pkg_array[@]} -gt 0 ]] && pkg_install "${pkg_array[@]}"; then
+                    _LAST_INSTALL_METHOD="$method_type"
                     return 0
                 fi
                 ;;
@@ -320,6 +335,7 @@ auto_install_module() {
                 temp_deb=$(omniset_mktemp --suffix=.deb)
                 if curl -fsSL --connect-timeout 15 --max-time 300 --retry 3 --retry-delay 2 -o "$temp_deb" "$url" && install_deb "$temp_deb"; then
                     rm -f "$temp_deb"
+                    _LAST_INSTALL_METHOD="$method_type"
                     return 0
                 fi
                 rm -f "$temp_deb"
@@ -338,6 +354,7 @@ auto_install_module() {
 
                 if add_apt_repo "$repo" "$key_url" "$key_name"; then
                     if [[ ${#repo_pkg_array[@]} -gt 0 ]] && pkg_install "${repo_pkg_array[@]}"; then
+                        _LAST_INSTALL_METHOD="$method_type"
                         return 0
                     fi
                 fi
@@ -347,6 +364,7 @@ auto_install_module() {
                 local app_id
                 app_id=$(yq -r ".install_methods[$i].id" "$manifest")
                 if install_flatpak "$app_id"; then
+                    _LAST_INSTALL_METHOD="$method_type"
                     return 0
                 fi
                 ;;
@@ -356,6 +374,7 @@ auto_install_module() {
                 snap_name=$(yq -r ".install_methods[$i].name" "$manifest")
                 flags=$(yq -r ".install_methods[$i].flags // empty" "$manifest")
                 if install_snap "$snap_name" "$flags"; then
+                    _LAST_INSTALL_METHOD="$method_type"
                     return 0
                 fi
                 ;;
@@ -364,6 +383,7 @@ auto_install_module() {
                 local crate
                 crate=$(yq -r ".install_methods[$i].crate" "$manifest")
                 if install_cargo "$crate"; then
+                    _LAST_INSTALL_METHOD="$method_type"
                     return 0
                 fi
                 ;;
@@ -409,6 +429,7 @@ auto_install_module() {
 
                 if bash "$temp_script"; then
                     rm -f "$temp_script"
+                    _LAST_INSTALL_METHOD="$method_type"
                     return 0
                 fi
                 rm -f "$temp_script"
@@ -487,6 +508,7 @@ auto_install_module() {
                 print_step "Starting container: $container_name"
                 if docker "${docker_args[@]}"; then
                     print_success "Container $container_name started successfully"
+                    _LAST_INSTALL_METHOD="$method_type"
 
                     # Create convenience wrapper script
                     local wrapper_script="/usr/local/bin/${module_id}-docker"
@@ -529,6 +551,7 @@ WRAPPER
                     fi
 
                     print_success "AppImage installed: $appimage_path"
+                    _LAST_INSTALL_METHOD="$method_type"
                     return 0
                 fi
                 ;;
@@ -578,6 +601,7 @@ WRAPPER
                     sudo chmod +x "$install_path/$bin_name"
                     print_success "Binary installed: $install_path/$bin_name"
                     rm -f "$temp_file"
+                    _LAST_INSTALL_METHOD="$method_type"
                     return 0
                 fi
                 rm -f "$temp_file"
@@ -696,6 +720,7 @@ uninstall_module() {
     if [[ -x "$uninstall_script" ]]; then
         if bash "$uninstall_script"; then
             print_success "$display_name uninstalled"
+            state_record_uninstall "$module_id"
             return 0
         else
             print_error "Failed to uninstall $display_name"
@@ -712,5 +737,6 @@ uninstall_module() {
         pkg_remove "${rm_pkg_array[@]}"
     fi
 
+    state_record_uninstall "$module_id"
     return 0
 }

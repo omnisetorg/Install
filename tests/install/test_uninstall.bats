@@ -23,70 +23,48 @@ teardown() {
 # remove_package
 # ═══════════════════════════════════════════════════════════════
 
-@test "remove_package: tries apt-get when available" {
+@test "remove_package: uses PKG_REMOVE to remove package" {
+    create_sudo_passthrough
     create_mock "apt-get" 0
-    create_sudo_passthrough
-    mock_command_not_exists "dnf"
-    mock_command_not_exists "yum"
-    mock_command_not_exists "pacman"
-    mock_command_not_exists "zypper"
-    mock_command_not_exists "apk"
+    export PKG_REMOVE="sudo apt-get remove -y"
 
     run remove_package "test-pkg"
     assert_success
     assert_mock_called "sudo"
 }
 
-@test "remove_package: tries dnf when available" {
-    mock_command_not_exists "apt-get"
+@test "remove_package: warns when PKG_REMOVE is not set" {
+    export PKG_REMOVE=""
+
+    run remove_package "test-pkg"
+    assert_success
+    assert_output --partial "No package manager detected"
+}
+
+@test "remove_package: works with dnf PKG_REMOVE" {
+    create_sudo_passthrough
     create_mock "dnf" 0
-    create_sudo_passthrough
-    mock_command_not_exists "yum"
-    mock_command_not_exists "pacman"
-    mock_command_not_exists "zypper"
-    mock_command_not_exists "apk"
+    export PKG_REMOVE="sudo dnf remove -y"
 
     run remove_package "test-pkg"
     assert_success
     assert_mock_called "sudo"
 }
 
-@test "remove_package: tries pacman when available" {
-    mock_command_not_exists "apt-get"
-    mock_command_not_exists "dnf"
-    mock_command_not_exists "yum"
+@test "remove_package: works with pacman PKG_REMOVE" {
+    create_sudo_passthrough
     create_mock "pacman" 0
-    create_sudo_passthrough
-    mock_command_not_exists "zypper"
-    mock_command_not_exists "apk"
+    export PKG_REMOVE="sudo pacman -R --noconfirm"
 
     run remove_package "test-pkg"
     assert_success
     assert_mock_called "sudo"
 }
 
-@test "remove_package: tries zypper when available" {
-    mock_command_not_exists "apt-get"
-    mock_command_not_exists "dnf"
-    mock_command_not_exists "yum"
-    mock_command_not_exists "pacman"
-    create_mock "zypper" 0
+@test "remove_package: works with apk PKG_REMOVE" {
     create_sudo_passthrough
-    mock_command_not_exists "apk"
-
-    run remove_package "test-pkg"
-    assert_success
-    assert_mock_called "sudo"
-}
-
-@test "remove_package: tries apk when available" {
-    mock_command_not_exists "apt-get"
-    mock_command_not_exists "dnf"
-    mock_command_not_exists "yum"
-    mock_command_not_exists "pacman"
-    mock_command_not_exists "zypper"
     create_mock "apk" 0
-    create_sudo_passthrough
+    export PKG_REMOVE="sudo apk del"
 
     run remove_package "test-pkg"
     assert_success
@@ -154,15 +132,23 @@ teardown() {
 # cleanup_orphans
 # ═══════════════════════════════════════════════════════════════
 
-@test "cleanup_orphans: calls autoremove on apt" {
-    create_mock "apt-get" 0
+@test "cleanup_orphans: uses PKG_AUTOREMOVE and PKG_CLEAN" {
     create_sudo_passthrough
-    mock_command_not_exists "dnf"
-    mock_command_not_exists "pacman"
+    create_mock "apt-get" 0
+    export PKG_AUTOREMOVE="sudo apt-get autoremove -y"
+    export PKG_CLEAN="sudo apt-get autoclean"
 
     run cleanup_orphans
     assert_success
     assert_mock_called "sudo"
+}
+
+@test "cleanup_orphans: succeeds when PKG_AUTOREMOVE is unset" {
+    export PKG_AUTOREMOVE=""
+    export PKG_CLEAN=""
+
+    run cleanup_orphans
+    assert_success
 }
 
 # ═══════════════════════════════════════════════════════════════
@@ -225,12 +211,9 @@ teardown() {
 # ═══════════════════════════════════════════════════════════════
 
 @test "full_uninstall: orchestrates complete removal" {
-    create_mock "apt-get" 0
-    mock_command_not_exists "dnf"
-    mock_command_not_exists "yum"
-    mock_command_not_exists "pacman"
-    mock_command_not_exists "zypper"
-    mock_command_not_exists "apk"
+    export PKG_REMOVE="echo remove"
+    export PKG_AUTOREMOVE="true"
+    export PKG_CLEAN="true"
     mock_command_not_exists "flatpak"
     mock_command_not_exists "snap"
     mock_command_not_exists "docker"
@@ -241,13 +224,10 @@ teardown() {
 }
 
 @test "full_uninstall: calls flatpak removal when specified" {
-    create_mock "apt-get" 0
+    export PKG_REMOVE="echo remove"
+    export PKG_AUTOREMOVE="true"
+    export PKG_CLEAN="true"
     create_mock "flatpak" 0
-    mock_command_not_exists "dnf"
-    mock_command_not_exists "yum"
-    mock_command_not_exists "pacman"
-    mock_command_not_exists "zypper"
-    mock_command_not_exists "apk"
 
     run full_uninstall "test-module" "pkg1" "com.example.App"
     assert_success
@@ -257,12 +237,9 @@ teardown() {
 @test "full_uninstall: removes config when requested" {
     mkdir -p "$HOME/.config/test-uninstall-cfg"
 
-    create_mock "apt-get" 0
-    mock_command_not_exists "dnf"
-    mock_command_not_exists "yum"
-    mock_command_not_exists "pacman"
-    mock_command_not_exists "zypper"
-    mock_command_not_exists "apk"
+    export PKG_REMOVE="echo remove"
+    export PKG_AUTOREMOVE="true"
+    export PKG_CLEAN="true"
     mock_command_not_exists "flatpak"
     mock_command_not_exists "snap"
     mock_command_not_exists "docker"

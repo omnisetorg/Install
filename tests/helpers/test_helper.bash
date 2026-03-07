@@ -111,5 +111,7 @@ source_all_libs() {
     source_lib "ui/print.sh"
     source_lib "system/detect.sh"
     source_lib "system/packages.sh"
+    source_lib "install/state.sh"
     source_lib "install/modules.sh"
+    source_lib "install/uninstall.sh"
 }

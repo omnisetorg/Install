@@ -27,9 +27,15 @@ setup() {
     export PKG_INSTALL="echo pkg_install"
     export PKG_REMOVE="echo pkg_remove"
 
+    # Set up state dir in temp
+    export OMNISET_STATE_DIR="${TEST_TEMP_DIR}/state/installed"
+    export OMNISET_DATA_DIR="${TEST_TEMP_DIR}/state"
+
     # Source modules.sh only if bash 4+ is available
     if has_bash4; then
+        source_lib "install/state.sh"
         source_lib "install/modules.sh"
+        state_init
         declare -gA MODULE_REGISTRY=()
         INSTALLED_MODULES=()
         FAILED_MODULES=()

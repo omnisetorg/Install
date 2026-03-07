@@ -25,6 +25,9 @@ readonly OMNISET_API_URL="${OMNISET_WEB_URL}/api"
 # Logging
 readonly OMNISET_LOG_FILE="${OMNISET_DATA_DIR}/install.log"
 
+# State tracking
+readonly OMNISET_STATE_DIR="${OMNISET_DATA_DIR}/installed"
+
 # Installation
 readonly OMNISET_TEMP_DIR="/tmp/omniset-$$"
 readonly OMNISET_CHECKPOINT_DIR="${OMNISET_TEMP_DIR}/checkpoints"
@@ -32,13 +35,21 @@ readonly OMNISET_CHECKPOINT_DIR="${OMNISET_TEMP_DIR}/checkpoints"
 # Module categories
 readonly -a OMNISET_CATEGORIES=(
     "base"
+    "browsers"
+    "cli"
+    "communication"
+    "creative"
+    "databases"
     "desktop"
     "development"
-    "cli"
-    "creative"
+    "devops"
+    "devtools"
+    "editors"
     "gaming"
-    "communication"
+    "media"
+    "productivity"
     "system"
+    "terminals"
 )
 
 # Supported architectures

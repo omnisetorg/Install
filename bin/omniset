@@ -8,19 +8,9 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export OMNISET_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-# Source core libraries
-source "${OMNISET_ROOT}/lib/core/constants.sh"
-source "${OMNISET_ROOT}/lib/ui/colors.sh"
-source "${OMNISET_ROOT}/lib/ui/print.sh"
-source "${OMNISET_ROOT}/lib/system/detect.sh"
-source "${OMNISET_ROOT}/lib/system/packages.sh"
-source "${OMNISET_ROOT}/lib/install/modules.sh"
-source "${OMNISET_ROOT}/lib/web/server.sh"
-
-# Initialize
-init_ui
-detect_system
-detect_package_manager
+# Source all libraries via init.sh and initialize
+source "${OMNISET_ROOT}/lib/core/init.sh"
+omniset_init
 
 # ═══════════════════════════════════════════════════════════════
 # Command Handlers
@@ -39,6 +29,7 @@ COMMANDS:
     list          List available modules
     info          Show module information
     search        Search for modules
+    status        Show installed modules and state
     doctor        Check system compatibility
     update        Update OmniSet
     web           Open web module selector
@@ -134,7 +125,7 @@ cmd_install() {
     if [[ "$web_mode" == true ]]; then
         # Start local web server and wait for selection
         if start_web_server; then
-            modules=($(get_selected_modules))
+            mapfile -t modules < <(get_selected_modules)
         else
             return 1
         fi
@@ -189,9 +180,6 @@ cmd_install() {
         return 0
     fi
 
-    # Install modules
-    discover_modules
-
     # Export flags for install_module to use
     export OMNISET_FORCE_INSTALL="$force"
     export OMNISET_PARALLEL="$parallel"
@@ -222,7 +210,6 @@ cmd_list() {
         esac
     done
 
-    discover_modules
     list_modules "$format" "$category"
 }
 
@@ -233,8 +220,6 @@ cmd_info() {
         print_error "Usage: omniset info <module>"
         return 1
     fi
-
-    discover_modules
 
     local module_dir
     module_dir=$(get_module_dir "$module_id") || {
@@ -402,7 +387,6 @@ cmd_uninstall() {
     fi
 
     print_banner
-    discover_modules
 
     print_header "Uninstallation Plan"
     print_info "Modules to uninstall:"
@@ -436,8 +420,6 @@ cmd_search() {
         print_error "Usage: omniset search <query>"
         return 1
     fi
-
-    discover_modules
 
     print_header "Search results for: $query"
 
@@ -507,6 +489,35 @@ cmd_update() {
     fi
 }
 
+cmd_status() {
+    print_header "OmniSet Installed Modules"
+
+    local modules
+    modules=$(state_list_installed)
+
+    if [[ -z "$modules" ]]; then
+        print_info "No modules installed via OmniSet"
+        return 0
+    fi
+
+    printf "  %-20s %-15s %-12s %s\n" "MODULE" "CATEGORY" "METHOD" "INSTALLED AT"
+    print_divider
+
+    local mod
+    for mod in $modules; do
+        local category method installed_at
+        category=$(state_get_field "$mod" "CATEGORY" 2>/dev/null || echo "unknown")
+        method=$(state_get_field "$mod" "INSTALL_METHOD" 2>/dev/null || echo "unknown")
+        installed_at=$(state_get_field "$mod" "INSTALLED_AT" 2>/dev/null || echo "unknown")
+        printf "  %-20s %-15s %-12s %s\n" "$mod" "$category" "$method" "$installed_at"
+    done
+
+    echo ""
+    local count
+    count=$(echo "$modules" | wc -w)
+    print_info "$count module(s) installed"
+}
+
 cmd_interactive_select() {
     # Check for dialog/whiptail
     local dialog_cmd=""
@@ -519,8 +530,6 @@ cmd_interactive_select() {
         print_info "Install with: sudo apt install whiptail"
         return 1
     fi
-
-    discover_modules
 
     # Build checklist items
     local items=()
@@ -542,7 +551,8 @@ cmd_interactive_select() {
     fi
 
     # Convert to array and install
-    local modules=($selected)
+    local -a modules
+    read -ra modules <<< "$selected"
     install_modules "${modules[@]}"
 }
 
@@ -570,6 +580,9 @@ main() {
         search)
             cmd_search "$@"
             ;;
+        status)
+            cmd_status "$@"
+            ;;
         doctor|check)
             cmd_doctor "$@"
             ;;
@@ -594,8 +607,6 @@ main() {
                 cmd_help
                 exit 1
             fi
-            # Need to discover modules first to check
-            discover_modules
             if [[ -n "${MODULE_REGISTRY[$command]:-}" ]]; then
                 cmd_install "$command" "$@"
             else

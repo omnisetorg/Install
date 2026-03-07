@@ -32,7 +32,12 @@ source "${OMNISET_LIB}/system/detect.sh"
 source "${OMNISET_LIB}/system/packages.sh"
 
 # Install system
+source "${OMNISET_LIB}/install/state.sh"
 source "${OMNISET_LIB}/install/modules.sh"
+source "${OMNISET_LIB}/install/uninstall.sh"
+
+# Web server
+source "${OMNISET_LIB}/web/server.sh"
 
 # ═══════════════════════════════════════════════════════════════
 # Initialization Functions
@@ -57,6 +62,9 @@ omniset_init() {
 
     # Create necessary directories
     mkdir -p "${OMNISET_DATA_DIR}" "${OMNISET_CACHE_DIR}" "${OMNISET_CONFIG_DIR}"
+
+    # Initialize state tracking
+    state_init
 
     # Discover available modules
     discover_modules
